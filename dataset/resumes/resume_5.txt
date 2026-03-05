@@ -1,0 +1,14 @@
+David Lee
+Email: david@email.com
+
+Education:
+B.Sc in Computer Science
+
+Experience:
+Fresher
+
+Skills:
+C, C++, Java, Basic Python
+
+Projects:
+Built small console applications in C++.

@@ -1,0 +1,15 @@
+Emily Johnson
+Email: emily@email.com
+
+Education:
+M.Tech in Data Science
+
+Experience:
+2 years experience as Data Analyst
+
+Skills:
+Python, SQL, Power BI, Tableau, Excel, Data Visualization
+
+Projects:
+Created dashboards using Power BI.
+Performed data cleaning and preprocessing.

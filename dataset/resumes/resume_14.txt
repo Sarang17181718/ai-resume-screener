@@ -1,0 +1,15 @@
+William Anderson
+Email: william.anderson@email.com
+
+Education:
+B.Tech in Artificial Intelligence
+
+Experience:
+2 years experience as Machine Learning Engineer
+
+Skills:
+Python, TensorFlow, Keras, NLP, Deep Learning
+
+Projects:
+Developed a sentiment analysis model for product reviews.
+Built an image classification system using CNN.

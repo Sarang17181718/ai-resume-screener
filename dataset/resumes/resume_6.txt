@@ -1,0 +1,15 @@
+Michael Smith
+Email: michael.smith@email.com
+
+Education:
+B.Sc in Information Technology
+
+Experience:
+3 years experience as Web Developer
+
+Skills:
+HTML, CSS, JavaScript, React, Node.js, MongoDB
+
+Projects:
+Developed an e-commerce website with payment integration.
+Built a responsive portfolio website.

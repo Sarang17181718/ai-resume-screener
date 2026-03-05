@@ -1,0 +1,15 @@
+Michael Brown
+Email: michael@email.com
+
+Education:
+B.Tech in Computer Engineering
+
+Experience:
+3 years experience in DevOps Engineering
+
+Skills:
+AWS, Docker, Kubernetes, Linux, CI/CD, Python
+
+Projects:
+Implemented CI/CD pipelines.
+Deployed scalable applications on AWS.

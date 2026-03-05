@@ -1,0 +1,9 @@
+We are seeking a Backend Developer with 3+ years of experience.
+
+Required Skills:
+Python, Django/Flask, REST APIs, PostgreSQL, Git
+
+Responsibilities:
+Design and develop backend services.
+Integrate APIs with frontend applications.
+Optimize database queries and improve performance.

@@ -1,0 +1,9 @@
+We are looking for a Data Analyst with 1–3 years of experience.
+
+Required Skills:
+Python, SQL, Excel, Power BI, Statistics
+
+Responsibilities:
+Analyze large datasets to extract insights.
+Create dashboards and reports for business teams.
+Perform data cleaning and preprocessing.

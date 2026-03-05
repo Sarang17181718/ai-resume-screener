@@ -1,0 +1,15 @@
+James Wilson
+Email: james.wilson@email.com
+
+Education:
+MCA (Master of Computer Applications)
+
+Experience:
+3 years experience as Backend Developer
+
+Skills:
+Java, Spring Boot, MySQL, REST APIs, Hibernate
+
+Projects:
+Developed scalable RESTful services for banking applications.
+Optimized database queries improving performance by 30%.

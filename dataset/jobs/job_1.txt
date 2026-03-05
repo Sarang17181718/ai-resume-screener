@@ -1,0 +1,9 @@
+We are looking for a Python Developer with 2+ years of experience.
+
+Required Skills:
+Python, SQL, Machine Learning, AWS
+
+Responsibilities:
+Develop backend APIs.
+Work on data processing pipelines.
+Deploy applications on cloud.

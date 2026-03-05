@@ -1,0 +1,15 @@
+David Brown
+Email: david.brown@email.com
+
+Education:
+B.E in Electronics and Communication
+
+Experience:
+4 years experience as Embedded Systems Engineer
+
+Skills:
+C, C++, Microcontrollers, IoT, Raspberry Pi, Arduino
+
+Projects:
+Developed a smart home automation system.
+Built an IoT-based weather monitoring device.

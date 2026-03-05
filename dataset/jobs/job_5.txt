@@ -1,0 +1,9 @@
+We are looking for a Cloud Engineer with 2–4 years of experience.
+
+Required Skills:
+AWS, Docker, Kubernetes, Python, CI/CD
+
+Responsibilities:
+Deploy and manage applications on cloud platforms.
+Monitor system performance and ensure scalability.
+Implement DevOps best practices and automation pipelines.

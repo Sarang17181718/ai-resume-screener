@@ -1,0 +1,15 @@
+John Doe
+Email: john.doe@email.com
+
+Education:
+B.Tech in Computer Science
+
+Experience:
+2 years experience as Software Developer
+
+Skills:
+Python, SQL, Machine Learning, Data Analysis, Pandas, NumPy, Scikit-learn
+
+Projects:
+Built a machine learning model for predicting house prices.
+Developed REST APIs using Flask.

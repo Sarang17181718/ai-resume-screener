@@ -1,0 +1,15 @@
+Olivia Davis
+Email: olivia.davis@email.com
+
+Education:
+B.Sc in Computer Science
+
+Experience:
+1 year experience as Frontend Developer
+
+Skills:
+HTML, CSS, JavaScript, Angular, Bootstrap
+
+Projects:
+Developed a task management web application.
+Improved UI performance for an enterprise dashboard.

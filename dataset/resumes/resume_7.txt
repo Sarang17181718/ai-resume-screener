@@ -1,0 +1,15 @@
+Emily Johnson
+Email: emily.johnson@email.com
+
+Education:
+M.Tech in Data Science
+
+Experience:
+2 years experience as Data Analyst
+
+Skills:
+Python, SQL, Power BI, Tableau, Excel, Statistics
+
+Projects:
+Created interactive dashboards for sales analysis.
+Performed customer segmentation using clustering techniques

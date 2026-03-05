@@ -1,0 +1,15 @@
+Sarah Williams
+Email: sarah@email.com
+
+Education:
+B.E in Information Technology
+
+Experience:
+1 year experience as Frontend Developer
+
+Skills:
+HTML, CSS, JavaScript, React, Bootstrap
+
+Projects:
+Developed responsive web applications using React.
+Worked on UI/UX improvements.
