@@ -10,6 +10,30 @@ from sklearn.metrics.pairwise import cosine_similarity
 # nltk.download('stopwords')
 
 stop_words = set(stopwords.words('english'))
+skills_list = [
+    "python",
+    "java",
+    "c++",
+    "sql",
+    "machine learning",
+    "deep learning",
+    "data analysis",
+    "pandas",
+    "numpy",
+    "scikit learn",
+    "tensorflow",
+    "pytorch",
+    "flask",
+    "django",
+    "aws",
+    "docker",
+    "kubernetes",
+    "git",
+    "linux",
+    "html",
+    "css",
+    "javascript"
+]
 
 def clean_text(text):
     text = text.lower()
@@ -18,6 +42,15 @@ def clean_text(text):
     tokens = [word for word in tokens if word not in stop_words]
     return " ".join(tokens)
 
+def extract_skills(text):
+
+    found_skills = []
+
+    for skill in skills_list:
+        if skill in text:
+            found_skills.append(skill)
+
+    return found_skills
 
 resume_folder = "dataset/resumes/"
 job_folder = "dataset/jobs/"
@@ -32,6 +65,8 @@ for job_filename in os.listdir(job_folder):
             job_text = file.read()
 
         cleaned_job = clean_text(job_text)
+        job_skills = extract_skills(cleaned_job)
+        print("\nrequired skills:",job_skills)
 
         scores = []
 
@@ -43,6 +78,9 @@ for job_filename in os.listdir(job_folder):
                     resume_text = file.read()
 
                 cleaned_resume = clean_text(resume_text)
+                resume_skills=extract_skills(cleaned_resume)
+                matched_skills = set(job_skills) &set(resume_skills)
+                missing_skills = set(job_skills) - set(resume_skills)
 
                 vectorizer = TfidfVectorizer()
 
@@ -59,4 +97,32 @@ for job_filename in os.listdir(job_folder):
         print(f"\n===== Top {top_n} resumes for {job_filename} =====\n")
 
         for resume, score in scores[:top_n]:
-            print(f"{resume} --> {score:.2f}%")
+            print(f"\n{resume} --> {score:.2f}%")
+
+            with open(os.path.join(resume_folder, resume), "r", encoding="utf-8") as file:
+                resume_text = file.read()
+                cleaned_resume = clean_text(resume_text)
+                resume_skills = extract_skills(cleaned_resume)
+                matched_skills = set(job_skills) & set(resume_skills)
+                missing_skills = set(job_skills) - set(resume_skills)
+
+                print("Matched Skills:", list(matched_skills))
+                print("Missing Skills:", list(missing_skills))
+
+    
+    
+    
+
+
+    
+    
+
+    
+
+        
+
+   
+    
+    
+
+    
