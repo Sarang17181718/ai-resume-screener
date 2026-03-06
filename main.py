@@ -34,6 +34,13 @@ skills_list = [
     "css",
     "javascript"
 ]
+ground_truth = {
+    "job_1.txt": ["resume_1.txt", "resume_3.txt"],
+    "job_2.txt": ["resume_4.txt", "resume_7.txt"],
+    "job_3.txt": ["resume_1.txt", "resume_14.txt"],
+    "job_4.txt": ["resume_12.txt"],
+    "job_5.txt": ["resume_3.txt"]
+}
 
 def clean_text(text):
     text = text.lower()
@@ -93,6 +100,18 @@ for job_filename in os.listdir(job_folder):
                 scores.append((resume_filename, match_percentage))
 
         scores.sort(key=lambda x: x[1], reverse=True)
+        predicted_resumes = [resume for resume, score in scores[:top_n]]
+        actual_resumes = ground_truth.get(job_filename, [])
+        true_positive = len(set(predicted_resumes) & set(actual_resumes))
+        precision = true_positive / len(predicted_resumes) if predicted_resumes else 0
+        recall = true_positive / len(actual_resumes) if actual_resumes else 0
+        if precision + recall == 0:
+            f1_score = 0
+        else:
+            f1_score = 2 * (precision * recall) / (precision + recall)
+    
+
+    
 
         print(f"\n===== Top {top_n} resumes for {job_filename} =====\n")
 
@@ -108,6 +127,14 @@ for job_filename in os.listdir(job_folder):
 
                 print("Matched Skills:", list(matched_skills))
                 print("Missing Skills:", list(missing_skills))
+        print("\nModel Evaluation:")
+        print(f"Precision: {precision:.2f}")
+        print(f"Recall: {recall:.2f}")
+        print(f"F1 Score: {f1_score:.2f}")
+
+
+
+
 
     
     
