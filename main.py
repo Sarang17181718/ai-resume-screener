@@ -8,7 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # nltk.download('punkt')
 # nltk.download('stopwords')
-
+training_data=[]
 stop_words = set(stopwords.words('english'))
 skills_list = [
     "python",
@@ -96,7 +96,13 @@ for job_filename in os.listdir(job_folder):
                 similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
 
                 match_percentage = similarity[0][0] * 100
+                similarity_score = similarity[0][0]
+                resume_skills = extract_skills(cleaned_resume)
+                skill_match = len(set(job_skills) & set(resume_skills))
+                label = 1 if resume_filename in ground_truth.get(job_filename, []) else 0
+                training_data.append([similarity_score, skill_match, label])
 
+ 
                 scores.append((resume_filename, match_percentage))
 
         scores.sort(key=lambda x: x[1], reverse=True)
@@ -132,6 +138,16 @@ for job_filename in os.listdir(job_folder):
         print(f"Recall: {recall:.2f}")
         print(f"F1 Score: {f1_score:.2f}")
 
+
+import pandas as pd
+df = pd.DataFrame(training_data, columns=[
+    "similarity",
+    "skill_match",
+    "label"
+])
+
+print("/nTraining dataset:/n")
+print(df.head())
 
 
 
