@@ -172,7 +172,6 @@ model=LogisticRegression()
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
-
 print("\nLogistic Regression Accuracy:", accuracy)
 
 
@@ -181,6 +180,13 @@ rf_model.fit(X_train, y_train)
 rf_pred=rf_model.predict(X_test)
 rf_accuracy = accuracy_score(y_test, rf_pred)
 print("\nRandom Forest Accuracy:", rf_accuracy)
+rf_probabilities = rf_model.predict_proba(X)
+df["rf_hiring_probability"] = rf_probabilities[: ,1]*100
+top_candidates = df.sort_values(by="rf_hiring_probability", ascending=False)
+top_candidates = top_candidates.reset_index(drop=True)
+print("\nTop Hiring Predictions (Random Forest):\n")
+
+print(top_candidates[["resume","job","rf_hiring_probability"]].head(10))
 
 y_pred=model.predict(X_test)
 
@@ -198,6 +204,6 @@ df["hiring_probability"]= df["hiring_probability"] * 100
 top_candidates=df.sort_values(by="hiring_probability",ascending=False)
 top_candidates=top_candidates.reset_index(drop=True)
 top_candidates["hiring_probability"] = top_candidates["hiring_probability"].round(2)
-print("\nTop Hiring Predictions:\n")
+print("\nTop Hiring Predictions(logistic regression):\n")
 print(top_candidates[["resume", "job", "hiring_probability"]].head(10))
 
