@@ -1,3 +1,4 @@
+
 import re
 import os
 import nltk
@@ -100,9 +101,14 @@ for job_filename in os.listdir(job_folder):
                 resume_skills = extract_skills(cleaned_resume)
                 skill_match = len(set(job_skills) & set(resume_skills))
                 label = 1 if resume_filename in ground_truth.get(job_filename, []) else 0
-                training_data.append([similarity_score, skill_match, label])
+                training_data.append([
+                    resume_filename,
+                    job_filename,
+                    similarity_score,
+                    skill_match,
+                    label
+                    ])
 
- 
                 scores.append((resume_filename, match_percentage))
 
         scores.sort(key=lambda x: x[1], reverse=True)
@@ -141,31 +147,45 @@ for job_filename in os.listdir(job_folder):
 
 import pandas as pd
 df = pd.DataFrame(training_data, columns=[
+    "resume",
+    "job",
     "similarity",
     "skill_match",
     "label"
 ])
 
-print("/nTraining dataset:/n")
+print("\nTraining dataset:\n")
 print(df.head())
 
+X=df[["similarity","skill_match"]]
+y=df["label"]
 
 
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
-    
-    
-    
+from sklearn.linear_model import LogisticRegression
+model=LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred=model.predict(X_test)
+
+from sklearn.metrics import accuracy_score
+accuracy=accuracy_score(y_test,y_pred)
+
+print("\nModel Accuracy:",accuracy)
 
 
-    
-    
+probabilities=model.predict_proba(X)
+hiring_prob= probabilities[:, 1]
+df["hiring_probability"] = hiring_prob
+df["hiring_probability"]= df["hiring_probability"] * 100
 
-    
+top_candidates=df.sort_values(by="hiring_probability",ascending=False)
+top_candidates=top_candidates.reset_index(drop=True)
+top_candidates["hiring_probability"] = top_candidates["hiring_probability"].round(2)
+print("\nTop Hiring Predictions:\n")
+print(top_candidates[["resume", "job", "hiring_probability"]].head(10))
 
-        
-
-   
-    
-    
-
-    
