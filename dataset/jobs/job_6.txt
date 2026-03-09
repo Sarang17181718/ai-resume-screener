@@ -1,0 +1,23 @@
+Job Title: Cloud DevOps Engineer
+
+We are looking for a Cloud DevOps Engineer with strong experience in modern cloud infrastructure and containerized applications.
+
+Required Skills:
+- Python
+- AWS
+- Docker
+- Kubernetes
+- CI/CD
+- Linux
+
+Responsibilities:
+- Develop and maintain cloud infrastructure on AWS.
+- Build and deploy containerized applications using Docker.
+- Manage Kubernetes clusters for scalable applications.
+- Write automation scripts in Python.
+- Implement CI/CD pipelines for continuous deployment.
+- Monitor system performance and ensure high availability.
+
+Qualifications:
+- Bachelor's degree in Computer Science or related field.
+- Experience with cloud infrastructure and DevOps practices.

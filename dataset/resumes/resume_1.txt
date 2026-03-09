@@ -1,15 +1,31 @@
-John Doe
-Email: john.doe@email.com
+Name: Alex Johnson
+Email: alex.johnson@email.com
 
-Education:
-B.Tech in Computer Science
-
-Experience:
-2 years experience as Software Developer
+Professional Summary:
+Cloud DevOps Engineer with 4 years of experience building scalable cloud applications and automating infrastructure.
 
 Skills:
-Python, SQL, Machine Learning, Data Analysis, Pandas, NumPy, Scikit-learn
+Python
+AWS
+Docker
+Kubernetes
+CI/CD
+Linux
+Terraform
+Git
 
-Projects:
-Built a machine learning model for predicting house prices.
-Developed REST APIs using Flask.
+Experience:
+
+DevOps Engineer
+TechCloud Solutions
+2021 - Present
+
+- Developed automation scripts using Python.
+- Deployed microservices using Docker containers.
+- Managed Kubernetes clusters for production workloads.
+- Built CI/CD pipelines for automated deployment.
+- Maintained cloud infrastructure using AWS services.
+
+Education:
+Bachelor of Science in Computer Science
+University of Technology

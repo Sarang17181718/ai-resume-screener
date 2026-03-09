@@ -1,0 +1,18 @@
+Job Title: Machine Learning Engineer
+We are looking for a Machine Learning Engineer to build and deploy AI-powered applications.
+Required Skills:
+- Python
+- TensorFlow
+- PyTorch
+- Scikit-learn
+- SQL
+- Docker
+Responsibilities:
+- Develop machine learning models for production.
+- Optimize training pipelines for efficiency.
+- Deploy models using Docker and cloud platforms.
+- Collaborate with data scientists for model improvements.
+- Monitor model performance and accuracy.
+Qualifications:
+- Master’s degree in Artificial Intelligence or related field.
+- Experience in ML engineering.

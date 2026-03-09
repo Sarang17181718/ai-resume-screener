@@ -1,9 +1,20 @@
-We are looking for a Data Analyst with 1–3 years of experience.
-
+Job Title: Cloud Security Engineer
+We are seeking a Cloud Security Engineer to design and implement secure cloud solutions across enterprise environments.
 Required Skills:
-Python, SQL, Excel, Power BI, Statistics
-
+- AWS Security
+- Azure Security
+- Python
+- Linux
+- Firewalls
+- IAM (Identity and Access Management)
+- SIEM Tools
 Responsibilities:
-Analyze large datasets to extract insights.
-Create dashboards and reports for business teams.
-Perform data cleaning and preprocessing.
+- Implement and monitor cloud security controls on AWS and Azure.
+- Develop automation scripts in Python for security compliance.
+- Configure firewalls and intrusion detection systems.
+- Manage IAM roles and policies for secure access.
+- Conduct vulnerability assessments and penetration testing.
+- Ensure compliance with industry security standards.
+Qualifications:
+- Bachelor’s degree in Computer Science, Information Security, or related field.
+- Experience in cloud security and enterprise risk management.

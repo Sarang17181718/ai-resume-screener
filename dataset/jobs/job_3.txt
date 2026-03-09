@@ -1,9 +1,18 @@
-We are hiring a Machine Learning Engineer with 2+ years of experience.
-
+Job Title: Data Scientist
+We are seeking a Data Scientist with expertise in machine learning and predictive analytics.
 Required Skills:
-Python, Scikit-learn, TensorFlow, Pandas, NumPy, SQL
-
+- Python
+- R
+- SQL
+- TensorFlow
+- Pandas
+- Tableau
 Responsibilities:
-Build and train machine learning models.
-Perform feature engineering and model evaluation.
-Deploy ML models into production systems.
+- Build predictive models for business insights.
+- Analyze large datasets using Python and R.
+- Create visualizations with Tableau.
+- Deploy machine learning models in production.
+- Collaborate with stakeholders to define data-driven strategies.
+Qualifications:
+- Master’s degree in Data Science or related field.
+- Proven experience in ML and analytics.

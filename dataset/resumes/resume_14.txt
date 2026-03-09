@@ -1,15 +1,17 @@
-William Anderson
-Email: william.anderson@email.com
-
-Education:
-B.Tech in Artificial Intelligence
-
-Experience:
-2 years experience as Machine Learning Engineer
-
+Name: James Carter
+Email: james.carter@email.com
+Professional Summary:
+AI Engineer with 4 years of experience building machine learning models and deploying AI solutions.
 Skills:
-Python, TensorFlow, Keras, NLP, Deep Learning
-
-Projects:
-Developed a sentiment analysis model for product reviews.
-Built an image classification system using CNN.
+Python, TensorFlow, PyTorch, NLP, Computer Vision, Docker
+Experience:
+AI Engineer
+NeuralWorks
+2021 - Present
+- Developed deep learning models for image recognition.
+- Built NLP pipelines for text classification.
+- Deployed AI models using Docker.
+- Collaborated with data scientists and engineers.
+Education:
+Bachelor of Science in Artificial Intelligence
+MIT

@@ -1,15 +1,17 @@
-Ava Taylor
-Email: ava.taylor@email.com
-
-Education:
-BBA in Finance
-
-Experience:
-2 years experience as Financial Analyst
-
+Name: Maria Gonzalez
+Email: maria.gonzalez@email.com
+Professional Summary:
+UX Designer with 5 years of experience creating user-centered digital experiences.
 Skills:
-Financial Modeling, Excel, Power BI, Risk Analysis, Accounting
-
-Projects:
-Built financial forecasting models for startups.
-Analyzed investment portfolios for risk assessment.
+Figma, Sketch, Adobe XD, Wireframing, Prototyping, User Research
+Experience:
+UX Designer
+DesignHub
+2020 - Present
+- Conducted user research and usability testing.
+- Designed wireframes and prototypes.
+- Collaborated with developers for implementation.
+- Improved product usability scores.
+Education:
+Bachelor of Design
+University of Madrid

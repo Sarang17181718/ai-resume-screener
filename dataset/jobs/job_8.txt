@@ -1,0 +1,18 @@
+Job Title: UI/UX Designer
+We are hiring a UI/UX Designer to create intuitive and engaging digital experiences.
+Required Skills:
+- Figma
+- Adobe XD
+- Sketch
+- HTML/CSS
+- Wireframing
+- Prototyping
+Responsibilities:
+- Design wireframes and prototypes for web and mobile apps.
+- Conduct user research and usability testing.
+- Collaborate with developers for design implementation.
+- Improve user engagement through design.
+- Maintain design consistency across platforms.
+Qualifications:
+- Bachelor’s degree in Design or related field.
+- Experience in UI/UX design.

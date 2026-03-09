@@ -1,9 +1,19 @@
-We are seeking a Backend Developer with 3+ years of experience.
-
+Job Title: Frontend Developer
+We are hiring a Frontend Developer to create responsive and user-friendly web applications.
 Required Skills:
-Python, Django/Flask, REST APIs, PostgreSQL, Git
-
+- HTML
+- CSS
+- JavaScript
+- React
+- Bootstrap
+- Git
 Responsibilities:
-Design and develop backend services.
-Integrate APIs with frontend applications.
-Optimize database queries and improve performance.
+- Develop responsive web interfaces using React.
+- Ensure cross-browser compatibility.
+- Collaborate with designers to implement UI/UX.
+- Optimize performance and accessibility.
+- Maintain version control with Git.
+Qualifications:
+- Bachelor’s degree in Computer Science or related field.
+- Experience in frontend development.
+ance.

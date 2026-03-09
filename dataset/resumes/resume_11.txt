@@ -1,15 +1,17 @@
-Olivia Davis
-Email: olivia.davis@email.com
-
-Education:
-B.Sc in Computer Science
-
-Experience:
-1 year experience as Frontend Developer
-
+Name: Raj Patel
+Email: raj.patel@email.com
+Professional Summary:
+Software Engineer with 5 years of experience in backend development and system optimization.
 Skills:
-HTML, CSS, JavaScript, Angular, Bootstrap
-
-Projects:
-Developed a task management web application.
-Improved UI performance for an enterprise dashboard.
+Java, Spring Boot, MySQL, REST APIs, Docker, Git
+Experience:
+Backend Developer
+TechWorks
+2020 - Present
+- Developed REST APIs with Spring Boot.
+- Optimized database queries in MySQL.
+- Containerized applications with Docker.
+- Improved system performance by 20%.
+Education:
+Bachelor of Technology in Computer Science
+Engineering Institute

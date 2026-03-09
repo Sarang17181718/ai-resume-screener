@@ -1,40 +1,30 @@
-
 import re
 import os
+import pandas as pd
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+
+from sentence_transformers import SentenceTransformer
 # nltk.download('punkt')
 # nltk.download('stopwords')
-training_data=[]
+
+training_data = []
+
 stop_words = set(stopwords.words('english'))
+
 skills_list = [
-    "python",
-    "java",
-    "c++",
-    "sql",
-    "machine learning",
-    "deep learning",
-    "data analysis",
-    "pandas",
-    "numpy",
-    "scikit learn",
-    "tensorflow",
-    "pytorch",
-    "flask",
-    "django",
-    "aws",
-    "docker",
-    "kubernetes",
-    "git",
-    "linux",
-    "html",
-    "css",
-    "javascript"
+    "python","java","c++","sql","machine learning","deep learning",
+    "data analysis","pandas","numpy","scikit learn","tensorflow",
+    "pytorch","flask","django","aws","docker","kubernetes","git",
+    "linux","html","css","javascript"
 ]
 ground_truth = {
     "job_1.txt": ["resume_1.txt", "resume_3.txt"],
@@ -43,29 +33,29 @@ ground_truth = {
     "job_4.txt": ["resume_12.txt"],
     "job_5.txt": ["resume_3.txt"]
 }
-
+# Text Cleaning
+# -----------------------------
 def clean_text(text):
     text = text.lower()
     text = re.sub(r'[^\w\s]', ' ', text)
     tokens = word_tokenize(text)
-    tokens = [word for word in tokens if word not in stop_words]
+    tokens = [w for w in tokens if w not in stop_words]
     return " ".join(tokens)
-
+# Skill Extraction
+# -----------------------------
 def extract_skills(text):
-
-    found_skills = []
-
+    found = []
     for skill in skills_list:
-        if skill in text:
-            found_skills.append(skill)
-
-    return found_skills
+        if skill.lower() in text:
+            found.append(skill)
+    return found
 
 resume_folder = "dataset/resumes/"
 job_folder = "dataset/jobs/"
-
 top_n = 3
 
+# TF-IDF Matching
+# -----------------------------
 for job_filename in os.listdir(job_folder):
 
     if job_filename.endswith(".txt"):
@@ -75,7 +65,8 @@ for job_filename in os.listdir(job_folder):
 
         cleaned_job = clean_text(job_text)
         job_skills = extract_skills(cleaned_job)
-        print("\nrequired skills:",job_skills)
+
+        print("\nRequired skills:", job_skills)
 
         scores = []
 
@@ -87,123 +78,153 @@ for job_filename in os.listdir(job_folder):
                     resume_text = file.read()
 
                 cleaned_resume = clean_text(resume_text)
-                resume_skills=extract_skills(cleaned_resume)
-                matched_skills = set(job_skills) &set(resume_skills)
+
+                resume_skills = extract_skills(cleaned_resume)
+
+                matched_skills = set(job_skills) & set(resume_skills)
                 missing_skills = set(job_skills) - set(resume_skills)
 
                 vectorizer = TfidfVectorizer()
-
                 tfidf_matrix = vectorizer.fit_transform([cleaned_resume, cleaned_job])
 
                 similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
-
-                match_percentage = similarity[0][0] * 100
                 similarity_score = similarity[0][0]
-                resume_skills = extract_skills(cleaned_resume)
-                skill_match = len(set(job_skills) & set(resume_skills))
+                match_percentage = similarity_score * 100
+
+                skill_match = len(matched_skills)
+
                 label = 1 if resume_filename in ground_truth.get(job_filename, []) else 0
+
                 training_data.append([
                     resume_filename,
                     job_filename,
                     similarity_score,
                     skill_match,
                     label
-                    ])
+                ])
 
                 scores.append((resume_filename, match_percentage))
 
         scores.sort(key=lambda x: x[1], reverse=True)
+
         predicted_resumes = [resume for resume, score in scores[:top_n]]
         actual_resumes = ground_truth.get(job_filename, [])
+
         true_positive = len(set(predicted_resumes) & set(actual_resumes))
+
         precision = true_positive / len(predicted_resumes) if predicted_resumes else 0
         recall = true_positive / len(actual_resumes) if actual_resumes else 0
+
         if precision + recall == 0:
             f1_score = 0
         else:
             f1_score = 2 * (precision * recall) / (precision + recall)
-    
 
-    
-
-        print(f"\n===== Top {top_n} resumes for {job_filename} =====\n")
+        print(f"\n===== Top {top_n} resumes for {job_filename} =====")
 
         for resume, score in scores[:top_n]:
+
             print(f"\n{resume} --> {score:.2f}%")
 
             with open(os.path.join(resume_folder, resume), "r", encoding="utf-8") as file:
                 resume_text = file.read()
-                cleaned_resume = clean_text(resume_text)
-                resume_skills = extract_skills(cleaned_resume)
-                matched_skills = set(job_skills) & set(resume_skills)
-                missing_skills = set(job_skills) - set(resume_skills)
 
-                print("Matched Skills:", list(matched_skills))
-                print("Missing Skills:", list(missing_skills))
+            cleaned_resume = clean_text(resume_text)
+            resume_skills = extract_skills(cleaned_resume)
+
+            matched = set(job_skills) & set(resume_skills)
+            missing = set(job_skills) - set(resume_skills)
+
+            print("Matched Skills:", list(matched))
+            print("Missing Skills:", list(missing))
+
         print("\nModel Evaluation:")
         print(f"Precision: {precision:.2f}")
         print(f"Recall: {recall:.2f}")
         print(f"F1 Score: {f1_score:.2f}")
 
 
-import pandas as pd
-df = pd.DataFrame(training_data, columns=[
-    "resume",
-    "job",
-    "similarity",
-    "skill_match",
-    "label"
-])
+# ML Dataset
+# -----------------------------
+df = pd.DataFrame(training_data,
+                  columns=["resume", "job", "similarity", "skill_match", "label"])
 
 print("\nTraining dataset:\n")
 print(df.head())
 
-X=df[["similarity","skill_match"]]
-y=df["label"]
 
+X = df[["similarity", "skill_match"]]
+y = df["label"]
 
-from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-from sklearn.linear_model import LogisticRegression
-model=LogisticRegression()
+# Logistic Regression
+# -----------------------------
+model = LogisticRegression()
 model.fit(X_train, y_train)
+
 y_pred = model.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
+
 print("\nLogistic Regression Accuracy:", accuracy)
 
-
+# Random Forest
+# -----------------------------
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_model.fit(X_train, y_train)
-rf_pred=rf_model.predict(X_test)
+
+rf_pred = rf_model.predict(X_test)
 rf_accuracy = accuracy_score(y_test, rf_pred)
+
 print("\nRandom Forest Accuracy:", rf_accuracy)
-rf_probabilities = rf_model.predict_proba(X)
-df["rf_hiring_probability"] = rf_probabilities[: ,1]*100
-top_candidates = df.sort_values(by="rf_hiring_probability", ascending=False)
-top_candidates = top_candidates.reset_index(drop=True)
+
+
+rf_prob = rf_model.predict_proba(X)
+df["rf_hiring_probability"] = rf_prob[:, 1] * 100
+
+top_candidates = df.sort_values(
+    by="rf_hiring_probability", ascending=False).reset_index(drop=True)
+
 print("\nTop Hiring Predictions (Random Forest):\n")
+print(top_candidates[["resume", "job", "rf_hiring_probability"]].head(10))
 
-print(top_candidates[["resume","job","rf_hiring_probability"]].head(10))
+# Logistic Probability
+# -----------------------------
+probabilities = model.predict_proba(X)
 
-y_pred=model.predict(X_test)
+df["hiring_probability"] = probabilities[:, 1] * 100
 
-from sklearn.metrics import accuracy_score
-accuracy=accuracy_score(y_test,y_pred)
+top_candidates = df.sort_values(
+    by="hiring_probability", ascending=False).reset_index(drop=True)
 
-print("\nModel Accuracy:",accuracy)
+df["hiring_probability"] = df["hiring_probability"].round(2)
 
-
-probabilities=model.predict_proba(X)
-hiring_prob= probabilities[:, 1]
-df["hiring_probability"] = hiring_prob
-df["hiring_probability"]= df["hiring_probability"] * 100
-
-top_candidates=df.sort_values(by="hiring_probability",ascending=False)
-top_candidates=top_candidates.reset_index(drop=True)
-top_candidates["hiring_probability"] = top_candidates["hiring_probability"].round(2)
-print("\nTop Hiring Predictions(logistic regression):\n")
+print("\nTop Hiring Predictions (Logistic Regression):\n")
 print(top_candidates[["resume", "job", "hiring_probability"]].head(10))
 
+# MiniLM Semantic Matching
+# -----------------------------
+print("\nRunning MiniLM Semantic Similarity...\n")
+
+model_semantic = SentenceTransformer('all-MiniLM-L6-v2')
+
+resume_path = os.path.join(resume_folder, "resume_1.txt")
+job_path = os.path.join(job_folder, "job_1.txt")
+
+with open(resume_path, "r", encoding="utf-8") as f:
+    resume_text = f.read()
+
+with open(job_path, "r", encoding="utf-8") as f:
+    job_text = f.read()
+
+resume_embedding = model_semantic.encode(resume_text)
+job_embedding = model_semantic.encode(job_text)
+
+similarity = cosine_similarity(
+    [resume_embedding],
+    [job_embedding]
+)
+
+print("Semantic Similarity Score:", similarity[0][0])

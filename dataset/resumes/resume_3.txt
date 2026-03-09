@@ -1,15 +1,17 @@
-Michael Brown
-Email: michael@email.com
-
-Education:
-B.Tech in Computer Engineering
-
-Experience:
-3 years experience in DevOps Engineering
-
+Name: Daniel Lee
+Email: daniel.lee@email.com
+Professional Summary:
+Data Scientist with 3 years of experience in machine learning, statistical modeling, and data visualization.
 Skills:
-AWS, Docker, Kubernetes, Linux, CI/CD, Python
-
-Projects:
-Implemented CI/CD pipelines.
-Deployed scalable applications on AWS.
+Python, R, SQL, TensorFlow, Pandas, Tableau, Scikit-learn
+Experience:
+Data Scientist
+Insight Analytics
+2022 - Present
+- Built predictive models using machine learning algorithms.
+- Conducted data cleaning and preprocessing.
+- Created dashboards in Tableau for business insights.
+- Automated reporting pipelines with Python.
+Education:
+Master of Science in Data Science
+University of California

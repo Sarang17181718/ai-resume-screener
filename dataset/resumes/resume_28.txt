@@ -1,0 +1,17 @@
+Name: Ava Robinson
+Email: ava.robinson@email.com
+Professional Summary:
+Product Manager with 5 years of experience leading product development and strategy.
+Skills:
+Agile, Scrum, Roadmapping, Jira, Market Research, Communication
+Experience:
+Product Manager
+InnovateTech
+2021 - Present
+- Defined product roadmaps and strategies.
+- Collaborated with engineering and design teams.
+- Conducted market research for new features.
+- Increased product adoption by 35%.
+Education:
+MBA in Product Management
+Business School of Technology

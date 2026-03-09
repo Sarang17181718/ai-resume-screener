@@ -1,15 +1,17 @@
-Emily Johnson
-Email: emily.johnson@email.com
-
-Education:
-M.Tech in Data Science
-
-Experience:
-2 years experience as Data Analyst
-
+Name: Sophia Martinez
+Email: sophia.martinez@email.com
+Professional Summary:
+Mobile App Developer with 5 years of experience building iOS and Android applications.
 Skills:
-Python, SQL, Power BI, Tableau, Excel, Statistics
-
-Projects:
-Created interactive dashboards for sales analysis.
-Performed customer segmentation using clustering techniques
+Swift, Kotlin, Flutter, React Native, Firebase, Git
+Experience:
+Mobile Developer
+AppWorks
+2019 - Present
+- Developed cross-platform apps using Flutter.
+- Built native iOS apps with Swift.
+- Integrated Firebase for authentication and analytics.
+- Published apps with 100k+ downloads.
+Education:
+Bachelor of Science in Computer Engineering
+Tech University

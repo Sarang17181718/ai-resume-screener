@@ -1,0 +1,17 @@
+Name: Benjamin Scott
+Email: benjamin.scott@email.com
+Professional Summary:
+DevOps Specialist with 6 years of experience automating deployments and managing cloud infrastructure.
+Skills:
+AWS, Docker, Kubernetes, Terraform, Jenkins, Python, Git
+Experience:
+DevOps Specialist
+CloudWorks
+2019 - Present
+- Automated deployments with Jenkins pipelines.
+- Managed Kubernetes clusters for production workloads.
+- Built infrastructure with Terraform.
+- Reduced deployment time by 50%.
+Education:
+Bachelor of Science in Computer Science
+Tech University

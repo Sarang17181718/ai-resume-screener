@@ -1,15 +1,17 @@
-David Brown
-Email: david.brown@email.com
-
-Education:
-B.E in Electronics and Communication
-
-Experience:
-4 years experience as Embedded Systems Engineer
-
+Name: Ahmed Khan
+Email: ahmed.khan@email.com
+Professional Summary:
+Cloud Architect with 8 years of experience designing scalable cloud solutions for enterprises.
 Skills:
-C, C++, Microcontrollers, IoT, Raspberry Pi, Arduino
-
-Projects:
-Developed a smart home automation system.
-Built an IoT-based weather monitoring device.
+AWS, Azure, GCP, Terraform, Kubernetes, Docker, Networking
+Experience:
+Cloud Architect
+CloudSphere
+2017 - Present
+- Designed multi-cloud architectures.
+- Automated infrastructure with Terraform.
+- Migrated legacy apps to Kubernetes clusters.
+- Reduced cloud costs by 25%.
+Education:
+Bachelor of Engineering in Computer Science
+Tech Institute

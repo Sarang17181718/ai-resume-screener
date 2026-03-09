@@ -1,0 +1,18 @@
+Job Title: Cybersecurity Analyst
+We are seeking a Cybersecurity Analyst to secure enterprise systems and mitigate threats.
+Required Skills:
+- Linux
+- Python
+- SIEM Tools
+- Firewalls
+- IDS/IPS
+- AWS Security
+Responsibilities:
+- Monitor network traffic for anomalies.
+- Conduct penetration testing and vulnerability assessments.
+- Implement cloud security best practices.
+- Respond to security incidents promptly.
+- Document and improve security policies.
+Qualifications:
+- Bachelor’s degree in Information Security or related field.
+- Experience in cybersecurity operations.

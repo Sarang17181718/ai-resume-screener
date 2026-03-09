@@ -1,9 +1,18 @@
-We are looking for a Python Developer with 2+ years of experience.
-
+Job Title: Software Engineer
+We are looking for a Software Engineer with strong experience in backend development and scalable applications.
 Required Skills:
-Python, SQL, Machine Learning, AWS
-
+- Java
+- Spring Boot
+- MySQL
+- REST APIs
+- Docker
+- Git
 Responsibilities:
-Develop backend APIs.
-Work on data processing pipelines.
-Deploy applications on cloud.
+- Develop and maintain backend services using Java and Spring Boot.
+- Design and optimize REST APIs.
+- Manage relational databases with MySQL.
+- Containerize applications with Docker.
+- Collaborate with frontend teams for integration.
+Qualifications:
+- Bachelor’s degree in Computer Science or related field.
+- Experience in backend development and system design.

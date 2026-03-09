@@ -1,15 +1,19 @@
-Michael Smith
-Email: michael.smith@email.com
-
-Education:
-B.Sc in Information Technology
-
-Experience:
-3 years experience as Web Developer
-
+Name: Sophia Williams
+Email: sophia.williams@email.com
+Professional Summary:
+Project Manager with 8 years of experience leading software development projects and managing agile teams.
 Skills:
-HTML, CSS, JavaScript, React, Node.js, MongoDB
+Agile, Scrum, JIRA, Confluence, Risk Management, Communication
+Experience:
+Project Manager
+NextGen Solutions
+2018 - Present
+- Led agile teams to deliver projects on time.
+- Managed budgets and project timelines.
+- Coordinated with stakeholders for requirements gathering.
+- Implemented project management best practices.
+Education:
+MBA in Project Management
+Harvard Business School
 
-Projects:
-Developed an e-commerce website with payment integration.
-Built a responsive portfolio website.
+

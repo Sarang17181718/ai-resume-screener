@@ -1,15 +1,17 @@
-Daniel Miller
-Email: daniel.miller@email.com
-
-Education:
-B.Tech in Mechanical Engineering
-
-Experience:
-2 years experience as Design Engineer
-
+Name: Hannah Wilson
+Email: hannah.wilson@email.com
+Professional Summary:
+Business Analyst with 6 years of experience analyzing requirements and improving business processes.
 Skills:
-AutoCAD, SolidWorks, ANSYS, Product Design, MS Excel
-
-Projects:
-Designed 3D models for automotive components.
-Performed stress analysis using ANSYS.
+SQL, Excel, Power BI, Requirements Gathering, Agile, Communication
+Experience:
+Business Analyst
+Enterprise Solutions
+2019 - Present
+- Gathered requirements from stakeholders.
+- Created dashboards with Power BI.
+- Analyzed workflows to improve efficiency.
+- Supported Agile development teams.
+Education:
+Bachelor of Business Administration
+Business University

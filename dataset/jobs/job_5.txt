@@ -1,9 +1,17 @@
-We are looking for a Cloud Engineer with 2–4 years of experience.
-
+Job Title: Mobile App Developer
+We are looking for a Mobile App Developer with experience in building iOS and Android applications.
 Required Skills:
-AWS, Docker, Kubernetes, Python, CI/CD
-
+- Swift
+- Kotlin
+- Flutter
+- React Native
+- Firebase
 Responsibilities:
-Deploy and manage applications on cloud platforms.
-Monitor system performance and ensure scalability.
-Implement DevOps best practices and automation pipelines.
+- Develop cross-platform mobile apps using Flutter.
+- Build native iOS and Android applications.
+- Integrate Firebase for authentication and analytics.
+- Collaborate with product teams for new features.
+- Publish and maintain apps on app stores.
+Qualifications:
+- Bachelor’s degree in Computer Engineering or related field.
+- Experience in mobile app development.
