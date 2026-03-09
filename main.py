@@ -131,22 +131,7 @@ for job_filename in os.listdir(job_folder):
 
                 overall_score = (0.5 * skill_score +0.3 * exp_score +0.2 * edu_score)
 
-    
-    
-    
-
-
-
-
-
-
-    
-    
-
-
-
-
-
+  
 
                        
                 vectorizer = TfidfVectorizer()
@@ -163,11 +148,11 @@ for job_filename in os.listdir(job_folder):
                 training_data.append([resume_filename,job_filename,similarity_score,skill_score,
                                        exp_score,edu_score,overall_score, label])
 
-                scores.append((resume_filename, match_percentage))
+                scores.append((resume_filename, overall_score, skill_score, exp_score, edu_score))
 
         scores.sort(key=lambda x: x[1], reverse=True)
 
-        predicted_resumes = [resume for resume, score in scores[:top_n]]
+        predicted_resumes = [resume for resume, _, _, _, _ in scores[:top_n]]
         actual_resumes = ground_truth.get(job_filename, [])
 
         true_positive = len(set(predicted_resumes) & set(actual_resumes))
@@ -180,39 +165,22 @@ for job_filename in os.listdir(job_folder):
         else:
             f1_score = 2 * (precision * recall) / (precision + recall)
 
-        print(f"\n===== Top {top_n} resumes for {job_filename} =====")
+        print(f"\n===== Candidate Ranking for {job_filename} =====")
+        rank = 1
+        for resume, score, skill_s, exp_s, edu_s in scores[:top_n]:
+            print(f"\nRank {rank}: {resume}")
+            print(f"Overall Score: {score:.2f}")
+            print(f"Skill Score: {skill_s:.2f}")
+            print(f"Experience Score: {exp_s:.2f}")
+            print(f"Education Score: {edu_s:.2f}")
+            rank += 1
 
-        for resume, score in scores[:top_n]:
-
-            print(f"\n{resume} --> {score:.2f}%")
-
-            with open(os.path.join(resume_folder, resume), "r", encoding="utf-8") as file:
-                resume_text = file.read()
-
-            cleaned_resume = clean_text(resume_text)
-            resume_skills = extract_skills(cleaned_resume)
 
             matched = set(job_skills) & set(resume_skills)
             missing = set(job_skills) - set(resume_skills)
-
-            print("Matched Skills:", list(matched))
-            print("Missing Skills:", list(missing))
             skill_score = (len(matched) / len(job_skills)) * 100 if job_skills else 0
-            resume_exp = extract_experience(cleaned_resume)
-            job_exp = extract_experience(cleaned_job)
-            if job_exp == 0:
-                exp_score = 50
-            else:
-                exp_score = min((resume_exp / job_exp) * 100, 100)
-            resume_edu = extract_education(cleaned_resume)
-            job_edu = extract_education(cleaned_job)
-            edu_match = set(resume_edu) & set(job_edu)
-            edu_score = (len(edu_match) / len(job_edu)) * 100 if job_edu else 50
-            overall_score = (0.5 * skill_score +0.3 * exp_score +0.2 * edu_score)
-            print("Skill Score:", round(skill_score,2))
-            print("Experience Score:", round(exp_score,2))
-            print("Education Score:", round(edu_score,2))
-            print("Overall Score:", round(overall_score,2))
+            
+            
 
 
 
