@@ -26,6 +26,17 @@ skills_list = [
     "pytorch","flask","django","aws","docker","kubernetes","git",
     "linux","html","css","javascript"
 ]
+education_keywords = [
+    "bachelor",
+    "master",
+    "phd",
+    "btech",
+    "mtech",
+    "computer science",
+    "information technology",
+    "engineering"
+]
+
 ground_truth = {
     "job_1.txt": ["resume_1.txt", "resume_3.txt"],
     "job_2.txt": ["resume_4.txt", "resume_7.txt"],
@@ -34,15 +45,16 @@ ground_truth = {
     "job_5.txt": ["resume_3.txt"]
 }
 # Text Cleaning
-# -----------------------------
+
 def clean_text(text):
     text = text.lower()
     text = re.sub(r'[^\w\s]', ' ', text)
     tokens = word_tokenize(text)
     tokens = [w for w in tokens if w not in stop_words]
     return " ".join(tokens)
+
 # Skill Extraction
-# -----------------------------
+
 def extract_skills(text):
     found = []
     for skill in skills_list:
@@ -54,8 +66,29 @@ resume_folder = "dataset/resumes/"
 job_folder = "dataset/jobs/"
 top_n = 3
 
+def extract_experience(text):
+
+    pattern = r'(\d+)\s+years'
+
+    matches = re.findall(pattern, text)
+
+    if matches:
+        return max([int(x) for x in matches])
+    else:
+        return 0
+    
+def extract_education(text):
+
+    found = []
+
+    for edu in education_keywords:
+
+        if edu in text:
+            found.append(edu)
+
+    return found
 # TF-IDF Matching
-# -----------------------------
+
 for job_filename in os.listdir(job_folder):
 
     if job_filename.endswith(".txt"):
@@ -83,7 +116,39 @@ for job_filename in os.listdir(job_folder):
 
                 matched_skills = set(job_skills) & set(resume_skills)
                 missing_skills = set(job_skills) - set(resume_skills)
+                skill_score = (len(matched_skills) / len(job_skills)) * 100 if job_skills else 0
 
+                resume_exp = extract_experience(cleaned_resume)
+                job_exp = extract_experience(cleaned_job)
+                if job_exp == 0:
+                    exp_score = 50
+                else:
+                    exp_score = min((resume_exp / job_exp) * 100, 100)
+                resume_edu = extract_education(cleaned_resume)
+                job_edu = extract_education(cleaned_job)
+                edu_match = set(resume_edu) & set(job_edu)
+                edu_score = (len(edu_match) / len(job_edu)) * 100 if job_edu else 50
+
+                overall_score = (0.5 * skill_score +0.3 * exp_score +0.2 * edu_score)
+
+    
+    
+    
+
+
+
+
+
+
+    
+    
+
+
+
+
+
+
+                       
                 vectorizer = TfidfVectorizer()
                 tfidf_matrix = vectorizer.fit_transform([cleaned_resume, cleaned_job])
 
@@ -95,13 +160,8 @@ for job_filename in os.listdir(job_folder):
 
                 label = 1 if resume_filename in ground_truth.get(job_filename, []) else 0
 
-                training_data.append([
-                    resume_filename,
-                    job_filename,
-                    similarity_score,
-                    skill_match,
-                    label
-                ])
+                training_data.append([resume_filename,job_filename,similarity_score,skill_score,
+                                       exp_score,edu_score,overall_score, label])
 
                 scores.append((resume_filename, match_percentage))
 
@@ -137,23 +197,45 @@ for job_filename in os.listdir(job_folder):
 
             print("Matched Skills:", list(matched))
             print("Missing Skills:", list(missing))
+            skill_score = (len(matched) / len(job_skills)) * 100 if job_skills else 0
+            resume_exp = extract_experience(cleaned_resume)
+            job_exp = extract_experience(cleaned_job)
+            if job_exp == 0:
+                exp_score = 50
+            else:
+                exp_score = min((resume_exp / job_exp) * 100, 100)
+            resume_edu = extract_education(cleaned_resume)
+            job_edu = extract_education(cleaned_job)
+            edu_match = set(resume_edu) & set(job_edu)
+            edu_score = (len(edu_match) / len(job_edu)) * 100 if job_edu else 50
+            overall_score = (0.5 * skill_score +0.3 * exp_score +0.2 * edu_score)
+            print("Skill Score:", round(skill_score,2))
+            print("Experience Score:", round(exp_score,2))
+            print("Education Score:", round(edu_score,2))
+            print("Overall Score:", round(overall_score,2))
+
+
 
         print("\nModel Evaluation:")
         print(f"Precision: {precision:.2f}")
         print(f"Recall: {recall:.2f}")
         print(f"F1 Score: {f1_score:.2f}")
+        
+
+
 
 
 # ML Dataset
-# -----------------------------
+
 df = pd.DataFrame(training_data,
-                  columns=["resume", "job", "similarity", "skill_match", "label"])
+columns=["resume","job","similarity","skill_score","exp_score","edu_score","overall_score","label"])
+
 
 print("\nTraining dataset:\n")
 print(df.head())
 
 
-X = df[["similarity", "skill_match"]]
+X = df[["similarity","skill_score","exp_score","edu_score","overall_score"]]
 y = df["label"]
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -161,7 +243,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Logistic Regression
-# -----------------------------
+
 model = LogisticRegression()
 model.fit(X_train, y_train)
 
@@ -171,7 +253,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print("\nLogistic Regression Accuracy:", accuracy)
 
 # Random Forest
-# -----------------------------
+
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_model.fit(X_train, y_train)
 
@@ -191,7 +273,7 @@ print("\nTop Hiring Predictions (Random Forest):\n")
 print(top_candidates[["resume", "job", "rf_hiring_probability"]].head(10))
 
 # Logistic Probability
-# -----------------------------
+
 probabilities = model.predict_proba(X)
 
 df["hiring_probability"] = probabilities[:, 1] * 100
@@ -205,7 +287,7 @@ print("\nTop Hiring Predictions (Logistic Regression):\n")
 print(top_candidates[["resume", "job", "hiring_probability"]].head(10))
 
 # MiniLM Semantic Matching
-# -----------------------------
+
 print("\nRunning MiniLM Semantic Similarity...\n")
 
 model_semantic = SentenceTransformer('all-MiniLM-L6-v2')
