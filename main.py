@@ -13,6 +13,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 from sentence_transformers import SentenceTransformer
+model_semantic = SentenceTransformer('all-MiniLM-L6-v2')
 # nltk.download('punkt')
 # nltk.download('stopwords')
 
@@ -102,6 +103,8 @@ for job_filename in os.listdir(job_folder):
         print("\nRequired skills:", job_skills)
 
         scores = []
+        semantic_scores = []
+        hybrid_scores=[]
 
         for resume_filename in os.listdir(resume_folder):
 
@@ -256,14 +259,124 @@ print(top_candidates[["resume", "job", "hiring_probability"]].head(10))
 
 # MiniLM Semantic Matching
 
+'''print("\nRunning MiniLM Semantic Similarity...\n")
+
+
+job_path = os.path.join(job_folder, "job_1.txt")
+
+with open(job_path, "r", encoding="utf-8") as f:
+    job_text = f.read()
+    job_embedding = model_semantic.encode(job_text)
+for resume_filename in os.listdir(resume_folder):
+
+    if resume_filename.endswith(".txt"):
+
+        resume_path = os.path.join(resume_folder, resume_filename)
+
+        with open(resume_path, "r", encoding="utf-8") as f:
+            resume_text = f.read()
+
+        resume_embedding = model_semantic.encode(resume_text)
+
+        similarity = cosine_similarity(
+            [resume_embedding],
+            [job_embedding]
+        )[0][0]
+
+        semantic_scores.append((resume_filename, similarity))
+
+        semantic_scores.sort(key=lambda x: x[1], reverse=True)
+        print("\nMiniLM Semantic Ranking:\n")
+        rank = 1
+        for resume, score in semantic_scores[:top_n]:
+            print(f"{rank}. {resume} → {score:.3f}")
+            rank += 1'''
+
 print("\nRunning MiniLM Semantic Similarity...\n")
 
 model_semantic = SentenceTransformer('all-MiniLM-L6-v2')
 
-resume_path = os.path.join(resume_folder, "resume_1.txt")
 job_path = os.path.join(job_folder, "job_1.txt")
 
-with open(resume_path, "r", encoding="utf-8") as f:
+with open(job_path, "r", encoding="utf-8") as f:
+    job_text = f.read()
+
+job_embedding = model_semantic.encode(job_text)
+
+semantic_scores = []
+
+for resume_filename in os.listdir(resume_folder):
+
+    if resume_filename.endswith(".txt"):
+
+        resume_path = os.path.join(resume_folder, resume_filename)
+
+        with open(resume_path, "r", encoding="utf-8") as f:
+            resume_text = f.read()
+
+        resume_embedding = model_semantic.encode(resume_text)
+
+        similarity = cosine_similarity(
+            [resume_embedding],
+            [job_embedding]
+        )[0][0]
+        semantic_percentage = similarity * 100
+
+        semantic_scores.append((resume_filename, similarity))
+
+semantic_scores.sort(key=lambda x: x[1], reverse=True)
+for resume_filename in os.listdir(resume_folder):
+    row = df[(df["resume"] == resume_filename) & (df["job"] == job_filename)]
+    if not row.empty:
+        skill_score = row["skill_score"].values[0]
+        exp_score = row["exp_score"].values[0]
+        edu_score = row["edu_score"].values[0]
+    else:
+        skill_score = 0
+        exp_score = 0
+        edu_score = 0
+
+    final_score = (
+    0.4 * semantic_percentage +
+    0.3 * skill_score +
+    0.2 * exp_score +
+    0.1 * edu_score
+    )
+    hybrid_scores.append(
+    (resume_filename, final_score, semantic_percentage, skill_score, exp_score, edu_score))
+
+
+
+
+
+print("\nMiniLM Semantic Ranking:\n")
+
+rank = 1
+
+for resume, score in semantic_scores[:top_n]:
+
+    print(f"{rank}. {resume} → {score:.3f}")
+
+    rank += 1
+
+
+
+print("\n===== Final Hybrid AI Ranking =====\n")
+
+rank = 1
+
+for resume, final, semantic, skill, exp, edu in hybrid_scores[:top_n]:
+
+    print(f"Rank {rank}: {resume}")
+    print(f"Semantic Score: {semantic:.2f}")
+    print(f"Skill Score: {skill:.2f}")
+    print(f"Experience Score: {exp:.2f}")
+    print(f"Education Score: {edu:.2f}")
+    print(f"Final Hybrid Score: {final:.2f}\n")
+
+    rank += 1
+
+'''with open(resume_path, "r", encoding="utf-8") as f:
     resume_text = f.read()
 
 with open(job_path, "r", encoding="utf-8") as f:
@@ -277,4 +390,4 @@ similarity = cosine_similarity(
     [job_embedding]
 )
 
-print("Semantic Similarity Score:", similarity[0][0])
+print("Semantic Similarity Score:", similarity[0][0])'''
