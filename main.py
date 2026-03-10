@@ -326,24 +326,44 @@ for resume_filename in os.listdir(resume_folder):
 
 semantic_scores.sort(key=lambda x: x[1], reverse=True)
 for resume_filename in os.listdir(resume_folder):
-    row = df[(df["resume"] == resume_filename) & (df["job"] == job_filename)]
-    if not row.empty:
-        skill_score = row["skill_score"].values[0]
-        exp_score = row["exp_score"].values[0]
-        edu_score = row["edu_score"].values[0]
-    else:
-        skill_score = 0
-        exp_score = 0
-        edu_score = 0
 
-    final_score = (
-    0.4 * semantic_percentage +
-    0.3 * skill_score +
-    0.2 * exp_score +
-    0.1 * edu_score
-    )
-    hybrid_scores.append(
-    (resume_filename, final_score, semantic_percentage, skill_score, exp_score, edu_score))
+    if resume_filename.endswith(".txt"):
+
+        resume_path = os.path.join(resume_folder, resume_filename)
+
+        with open(resume_path, "r", encoding="utf-8") as f:
+            resume_text = f.read()
+
+        resume_embedding = model_semantic.encode(resume_text)
+
+        similarity = cosine_similarity(
+            [resume_embedding],
+            [job_embedding]
+        )[0][0]
+
+        semantic_percentage = similarity * 100
+
+        row = df[(df["resume"] == resume_filename) & (df["job"] == job_filename)]
+
+        if not row.empty:
+            skill_score = row["skill_score"].values[0]
+            exp_score = row["exp_score"].values[0]
+            edu_score = row["edu_score"].values[0]
+        else:
+            skill_score = 0
+            exp_score = 0
+            edu_score = 0
+
+        final_score = (
+            0.4 * semantic_percentage +
+            0.3 * skill_score +
+            0.2 * exp_score +
+            0.1 * edu_score
+        )
+
+        hybrid_scores.append(
+            (resume_filename, final_score, semantic_percentage, skill_score, exp_score, edu_score)
+        )
 
 
 
