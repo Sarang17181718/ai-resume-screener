@@ -131,7 +131,7 @@ for job_filename in os.listdir(job_folder):
 
         scores = []
         semantic_scores = []
-        hybrid_scores=[]
+        
 
         for resume_filename in os.listdir(resume_folder):
 
@@ -294,6 +294,7 @@ print(top_candidates[["resume", "job", "hiring_probability"]].head(10))
 
 
 print("\nRunning MiniLM Semantic Similarity...\n")
+# hybrid_scores=[]
 
 model_semantic = SentenceTransformer('all-MiniLM-L6-v2')
 
@@ -305,37 +306,21 @@ with open(job_path, "r", encoding="utf-8") as f:
 
 job_embedding = model_semantic.encode(job_text)
 
-'''semantic_scores = []
-
-for resume_filename in os.listdir(resume_folder):
-
-    if resume_filename.endswith(".txt"):
-
-        resume_path = os.path.join(resume_folder, resume_filename)
-
-        with open(resume_path, "r", encoding="utf-8") as f:
-            resume_text = f.read()
-
-        resume_embedding = model_semantic.encode(resume_text)
-
-        similarity = cosine_similarity(
-            [resume_embedding],
-            [job_embedding]
-        )[0][0]
-        semantic_percentage = similarity * 100
-
-        semantic_scores.append((resume_filename, similarity))'''
 
 #hybrid section
-semantic_scores.sort(key=lambda x: x[1], reverse=True)
+hybrid_scores=[]
 for resume_filename in os.listdir(resume_folder):
 
-    if resume_filename.endswith(".txt"):
+    if resume_filename.endswith(".txt") or resume_filename.endswith(".pdf"):
 
         resume_path = os.path.join(resume_folder, resume_filename)
 
-        with open(resume_path, "r", encoding="utf-8") as f:
-            resume_text = f.read()
+        if resume_filename.endswith(".txt"):
+            with open(resume_path, "r", encoding="utf-8") as f:
+                resume_text = f.read()
+
+        elif resume_filename.endswith(".pdf"):
+            resume_text = extract_text_from_pdf(resume_path)
 
         resume_embedding = model_semantic.encode(resume_text)
 
@@ -369,7 +354,7 @@ for resume_filename in os.listdir(resume_folder):
         )
 
 hybrid_scores.sort(key=lambda x: x[1], reverse=True)
-semantic_scores.sort(key=lambda x: x[1], reverse=True)
+# semantic_scores.sort(key=lambda x: x[1], reverse=True)
 
 #save result to csv
 result_df = pd.DataFrame(
@@ -414,19 +399,3 @@ for resume, final, semantic, skill, exp, edu in hybrid_scores[:top_n]:
     print(f"Final Hybrid Score: {final:.2f}\n")
 
     rank += 1
-
-'''with open(resume_path, "r", encoding="utf-8") as f:
-    resume_text = f.read()
-
-with open(job_path, "r", encoding="utf-8") as f:
-    job_text = f.read()
-
-resume_embedding = model_semantic.encode(resume_text)
-job_embedding = model_semantic.encode(job_text)
-
-similarity = cosine_similarity(
-    [resume_embedding],
-    [job_embedding]
-)
-
-print("Semantic Similarity Score:", similarity[0][0])'''
