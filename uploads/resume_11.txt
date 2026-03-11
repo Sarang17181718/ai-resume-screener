@@ -1,0 +1,17 @@
+Name: Raj Patel
+Email: raj.patel@email.com
+Professional Summary:
+Software Engineer with 5 years of experience in backend development and system optimization.
+Skills:
+Java, Spring Boot, MySQL, REST APIs, Docker, Git
+Experience:
+Backend Developer
+TechWorks
+2020 - Present
+- Developed REST APIs with Spring Boot.
+- Optimized database queries in MySQL.
+- Containerized applications with Docker.
+- Improved system performance by 20%.
+Education:
+Bachelor of Technology in Computer Science
+Engineering Institute

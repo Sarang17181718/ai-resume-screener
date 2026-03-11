@@ -2,39 +2,112 @@
 <html>
 <head>
 <title>AI Resume Screener</title>
+
+<style>
+
+body{
+font-family: Arial;
+text-align:center;
+}
+
+#drop-area{
+border: 2px dashed #888;
+border-radius:10px;
+width:400px;
+margin:auto;
+padding:30px;
+cursor:pointer;
+}
+
+#drop-area.highlight{
+border-color:green;
+}
+
+#fileList{
+margin-top:15px;
+text-align:left;
+}
+
+</style>
+
 </head>
+
 <body>
 
 <h2>AI Resume Screening System</h2>
 
 <form action="/upload" method="post" enctype="multipart/form-data">
 
-    <label>Upload Job Description:</label><br>
-    <textarea name="job_text" rows="10" cols="60"></textarea>
+<label>Upload Job Description:</label><br>
 
-    <br><br>
+<textarea name="job_text" rows="8" cols="60"></textarea>
 
-    <label>Upload Resumes:</label>
-    <input type="file" name="resumes[]" id="resumeUpload" multiple>
-    <ul id="fileList"></ul>
+<br><br>
 
-    <br><br>
+<div id="drop-area">
 
-    <input type="submit" value="Run AI Screening">
+<p>Drag & Drop Resumes Here</p>
+<p>or</p>
+
+<input type="file" name="resumes[]" id="resumeUpload" multiple>
+
+</div>
+
+<ul id="fileList"></ul>
+
+<br>
+
+<input type="submit" value="Run AI Screening">
 
 </form>
 
 <script>
-document.getElementById("resumeUpload").addEventListener("change", function() {
-    let list = document.getElementById("fileList");
-    list.innerHTML = "";
 
-    for (let i = 0; i < this.files.length; i++) {
-        let li = document.createElement("li");
-        li.textContent = this.files[i].name;
-        list.appendChild(li);
-    }
+let dropArea = document.getElementById("drop-area");
+let fileInput = document.getElementById("resumeUpload");
+let fileList = document.getElementById("fileList");
+
+dropArea.addEventListener("dragover", (e)=>{
+e.preventDefault();
+dropArea.classList.add("highlight");
 });
+
+dropArea.addEventListener("dragleave", ()=>{
+dropArea.classList.remove("highlight");
+});
+
+dropArea.addEventListener("drop", (e)=>{
+
+e.preventDefault();
+dropArea.classList.remove("highlight");
+
+let files = e.dataTransfer.files;
+
+fileInput.files = files;
+
+showFiles(files);
+
+});
+
+fileInput.addEventListener("change", function(){
+showFiles(this.files);
+});
+
+function showFiles(files){
+
+fileList.innerHTML = "";
+
+for(let i=0;i<files.length;i++){
+
+let li = document.createElement("li");
+li.textContent = files[i].name;
+
+fileList.appendChild(li);
+
+}
+
+}
+
 </script>
 
 </body>
