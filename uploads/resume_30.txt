@@ -1,0 +1,19 @@
+Name: Chloe Anderson
+Email: chloe.anderson@email.com
+Professional Summary:
+Frontend Developer with 4 years of experience building responsive web applications.
+Skills:
+HTML, CSS, JavaScript, React, Redux, Git
+Experience:
+Frontend Developer
+BrightWeb
+2021 - Present
+- Built responsive UIs with React.
+- Implemented state management with Redux.
+- Collaborated with backend developers.
+- Optimized web performance.
+Education:
+Bachelor of Computer Science
+University of Sydney
+
+

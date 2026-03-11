@@ -22,3 +22,14 @@ Phase 3 – Web Integration
 Phase 4 – Database
 Phase 5 – Role Management
 Phase 6 – Deployment
+AI Resume Screening System
+
+Features:
+- NLP preprocessing
+- Skill extraction
+- TF-IDF similarity
+- MiniLM semantic matching
+- Hybrid AI scoring
+- Machine learning models
+- PDF resume support
+- Flask web interface

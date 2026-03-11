@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> AI Screening Results</title>
+</head>
+
+<body>
+
+<h2>Top Ranked Candidates</h2>
+
+<table border="1">
+
+<tr>
+<th>Rank</th>
+<th>Resume</th>
+<th>Score</th>
+</tr>
+
+{% for r in results %}
+
+<tr>
+<td>{{ loop.index }}</td>
+<td>{{ r[0] }}</td>
+<td>{{ r[1] }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html>
