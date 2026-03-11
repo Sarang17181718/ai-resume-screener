@@ -1,0 +1,19 @@
+Name: Fatima Khan
+Email: fatima.khan@email.com
+Professional Summary:
+Cybersecurity Analyst with 6 years of experience securing enterprise systems and conducting vulnerability assessments.
+Skills:
+Linux, Firewalls, SIEM Tools, Python, AWS Security, Penetration Testing
+Experience:
+Cybersecurity Analyst
+SecureTech Ltd.
+2019 - Present
+- Monitored network traffic for suspicious activity.
+- Conducted penetration testing and vulnerability scans.
+- Implemented security policies and compliance standards.
+- Trained employees on cybersecurity best practices.
+Education:
+Bachelor of Science in Cybersecurity
+National Institute of Technology
+
+

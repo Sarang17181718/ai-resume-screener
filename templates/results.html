@@ -7,13 +7,16 @@
 <body>
 
 <h2>Top Ranked Candidates</h2>
-
 <table border="1">
 
 <tr>
 <th>Rank</th>
 <th>Resume</th>
-<th>Score</th>
+<th>Semantic</th>
+<th>Skills</th>
+<th>Experience</th>
+<th>Education</th>
+<th>Final Score</th>
 </tr>
 
 {% for r in results %}
@@ -22,11 +25,14 @@
 <td>{{ loop.index }}</td>
 <td>{{ r[0] }}</td>
 <td>{{ r[1] }}</td>
+<td>{{ r[2] }}</td>
+<td>{{ r[3] }}</td>
+<td>{{ r[4] }}</td>
+<td>{{ r[5] }}</td>
 </tr>
 
 {% endfor %}
 
 </table>
-
 </body>
 </html>
