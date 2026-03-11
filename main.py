@@ -1,3 +1,5 @@
+import pdfplumber
+import fitz
 import re
 import os
 import pandas as pd
@@ -22,10 +24,11 @@ training_data = []
 stop_words = set(stopwords.words('english'))
 
 skills_list = [
-    "python","java","c++","sql","machine learning","deep learning",
-    "data analysis","pandas","numpy","scikit learn","tensorflow",
-    "pytorch","flask","django","aws","docker","kubernetes","git",
-    "linux","html","css","javascript"
+"python","java","c++","sql","machine learning","deep learning",
+"pandas","numpy","scikit learn","tensorflow","pytorch",
+"flask","django","aws","docker","kubernetes","git",
+"linux","html","css","javascript",
+"terraform","ansible","jenkins","prometheus","grafana"
 ]
 education_keywords = [
     "bachelor",
@@ -63,9 +66,33 @@ def extract_skills(text):
             found.append(skill)
     return found
 
+def extract_pdf_text(pdf_path):
+
+    text = ""
+
+    doc = fitz.open(pdf_path)
+
+    for page in doc:
+        text += page.get_text()
+
+    return text
+
 resume_folder = "dataset/resumes/"
 job_folder = "dataset/jobs/"
 top_n = 3
+
+#pdf
+def extract_text_from_pdf(pdf_path):
+
+    text = ""
+
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text
+
+    return text
 
 def extract_experience(text):
 
@@ -108,11 +135,16 @@ for job_filename in os.listdir(job_folder):
 
         for resume_filename in os.listdir(resume_folder):
 
-            if resume_filename.endswith(".txt"):
+            if resume_filename.endswith(".txt") or resume_filename.endswith(".pdf"):
 
-                with open(os.path.join(resume_folder, resume_filename), "r", encoding="utf-8") as file:
-                    resume_text = file.read()
-
+                resume_path = os.path.join(resume_folder, resume_filename)
+                if resume_filename.endswith(".pdf"):
+                    resume_text = extract_pdf_text(resume_path)
+                else:
+                    with open(resume_path, "r", encoding="utf-8") as file:
+                        resume_text = file.read()
+        
+    
                 cleaned_resume = clean_text(resume_text)
 
                 resume_skills = extract_skills(cleaned_resume)
@@ -170,6 +202,7 @@ for job_filename in os.listdir(job_folder):
 
         print(f"\n===== Candidate Ranking for {job_filename} =====")
         rank = 1
+
         for resume, score, skill_s, exp_s, edu_s in scores[:top_n]:
             print(f"\nRank {rank}: {resume}")
             print(f"Overall Score: {score:.2f}")
@@ -179,9 +212,9 @@ for job_filename in os.listdir(job_folder):
             rank += 1
 
 
-            matched = set(job_skills) & set(resume_skills)
+            '''matched = set(job_skills) & set(resume_skills)
             missing = set(job_skills) - set(resume_skills)
-            skill_score = (len(matched) / len(job_skills)) * 100 if job_skills else 0
+            skill_score = (len(matched) / len(job_skills)) * 100 if job_skills else 0'''
             
             
 
@@ -201,6 +234,8 @@ for job_filename in os.listdir(job_folder):
 df = pd.DataFrame(training_data,
 columns=["resume","job","similarity","skill_score","exp_score","edu_score","overall_score","label"])
 
+df["resume"] = df["resume"].str.replace(" ", "")
+df["job"] = df["job"].str.replace(" ", "")
 
 print("\nTraining dataset:\n")
 print(df.head())
@@ -257,53 +292,20 @@ df["hiring_probability"] = df["hiring_probability"].round(2)
 print("\nTop Hiring Predictions (Logistic Regression):\n")
 print(top_candidates[["resume", "job", "hiring_probability"]].head(10))
 
-# MiniLM Semantic Matching
-
-'''print("\nRunning MiniLM Semantic Similarity...\n")
-
-
-job_path = os.path.join(job_folder, "job_1.txt")
-
-with open(job_path, "r", encoding="utf-8") as f:
-    job_text = f.read()
-    job_embedding = model_semantic.encode(job_text)
-for resume_filename in os.listdir(resume_folder):
-
-    if resume_filename.endswith(".txt"):
-
-        resume_path = os.path.join(resume_folder, resume_filename)
-
-        with open(resume_path, "r", encoding="utf-8") as f:
-            resume_text = f.read()
-
-        resume_embedding = model_semantic.encode(resume_text)
-
-        similarity = cosine_similarity(
-            [resume_embedding],
-            [job_embedding]
-        )[0][0]
-
-        semantic_scores.append((resume_filename, similarity))
-
-        semantic_scores.sort(key=lambda x: x[1], reverse=True)
-        print("\nMiniLM Semantic Ranking:\n")
-        rank = 1
-        for resume, score in semantic_scores[:top_n]:
-            print(f"{rank}. {resume} → {score:.3f}")
-            rank += 1'''
 
 print("\nRunning MiniLM Semantic Similarity...\n")
 
 model_semantic = SentenceTransformer('all-MiniLM-L6-v2')
 
-job_path = os.path.join(job_folder, "job_1.txt")
+job_filename = "job_1.txt"
+job_path = os.path.join(job_folder, job_filename)
 
 with open(job_path, "r", encoding="utf-8") as f:
     job_text = f.read()
 
 job_embedding = model_semantic.encode(job_text)
 
-semantic_scores = []
+'''semantic_scores = []
 
 for resume_filename in os.listdir(resume_folder):
 
@@ -322,8 +324,9 @@ for resume_filename in os.listdir(resume_folder):
         )[0][0]
         semantic_percentage = similarity * 100
 
-        semantic_scores.append((resume_filename, similarity))
+        semantic_scores.append((resume_filename, similarity))'''
 
+#hybrid section
 semantic_scores.sort(key=lambda x: x[1], reverse=True)
 for resume_filename in os.listdir(resume_folder):
 
@@ -365,8 +368,24 @@ for resume_filename in os.listdir(resume_folder):
             (resume_filename, final_score, semantic_percentage, skill_score, exp_score, edu_score)
         )
 
+hybrid_scores.sort(key=lambda x: x[1], reverse=True)
+semantic_scores.sort(key=lambda x: x[1], reverse=True)
 
-
+#save result to csv
+result_df = pd.DataFrame(
+    hybrid_scores,
+    columns=[
+        "resume",
+        "final_score",
+        "semantic_score",
+        "skill_score",
+        "experience_score",
+        "education_score"
+    ]
+)
+result_df = result_df.sort_values(by="final_score", ascending=False)
+result_df.to_csv("final_resume_ranking.csv", index=False)
+print("\nResults saved to final_resume_ranking.csv")
 
 
 print("\nMiniLM Semantic Ranking:\n")
