@@ -1,8 +1,14 @@
+from flask import send_from_directory
 from flask import Flask, render_template, request
 import os
 from resume_screener import run_resume_screening
 
+
 app = Flask(__name__)
+
+@app.route("/download/<filename>")
+def download_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename, as_attachment=True)
 
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -35,3 +41,4 @@ def upload():
 
 if __name__ == "__main__":
     app.run(debug=True)
+

@@ -4,6 +4,35 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import pdfplumber
 
+
+skills_list = [
+    "python",
+    "sql",
+    "machine learning",
+    "deep learning",
+    "aws",
+    "docker",
+    "kubernetes",
+    "flask",
+    "django",
+    "pandas",
+    "numpy",
+    "tensorflow",
+    "pytorch"
+]
+
+def extract_skills(text):
+
+    text = text.lower()
+
+    found_skills = []
+
+    for skill in skills_list:
+        if skill.lower() in text:
+            found_skills.append(skill)
+
+    return found_skills
+
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 
@@ -27,7 +56,10 @@ def extract_text(filepath):
 
         with pdfplumber.open(filepath) as pdf:
             for page in pdf.pages:
-                text += page.extract_text()
+                t = page.extract_text()
+                if t:
+                    text += t
+    
 
         return text
 
@@ -83,7 +115,12 @@ def compute_education_score(resume_text):
 
 
 def run_resume_screening(job_text, resume_folder):
+    
+    job_skills = extract_skills(job_text)
+    print("Job Skills:", job_skills)
+    print("Job Skills:", job_skills)
     job_embedding = model.encode(job_text)
+    
 
 
     results = []
@@ -94,6 +131,11 @@ def run_resume_screening(job_text, resume_folder):
 
             # extract resume text
             resume_text = extract_text(os.path.join(resume_folder, resume_filename))
+            resume_skills = extract_skills(resume_text)
+            matched_skills = list(set(resume_skills) & set(job_skills))
+            missing_skills = list(set(job_skills) - set(resume_skills))
+
+
 
             # semantic similarity
             resume_embedding = model.encode(resume_text)
@@ -119,14 +161,28 @@ def run_resume_screening(job_text, resume_folder):
             results.append(
                 (
                     resume_filename,
-                    round(semantic_score,2),
+                    semantic_score,
                     skill_score,
                     exp_score,
                     edu_score,
-                    round(final_score,2)
-                )
-            )
+                    final_score,
+                    matched_skills,
+                    missing_skills
+                    )
+                    )
 
+
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+      
     results.sort(key=lambda x: x[5], reverse=True)
 
     return results[:10]

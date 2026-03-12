@@ -17,6 +17,9 @@
 <th>Experience</th>
 <th>Education</th>
 <th>Final Score</th>
+<th>Matched Skills</th>
+<th>Missing Skills</th>
+<th>Download</th>
 </tr>
 
 {% for r in results %}
@@ -29,6 +32,11 @@
 <td>{{ r[3] }}</td>
 <td>{{ r[4] }}</td>
 <td>{{ r[5] }}</td>
+<td>{{ r[6] }}</td>
+<td>{{ r[7] }}</td>
+<td>
+<a href="{{ url_for('download_file', filename=r[0]) }}">Download</a>>
+</td>
 </tr>
 
 {% endfor %}
