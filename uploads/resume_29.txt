@@ -1,0 +1,19 @@
+Name: James Miller
+Email: james.miller@email.com
+Professional Summary:
+Systems Administrator with 6 years of experience managing IT infrastructure and servers.
+Skills:
+Linux, Windows Server, VMware, AWS, Bash, PowerShell
+Experience:
+Systems Administrator
+IT Solutions Group
+2019 - Present
+- Managed Linux and Windows servers.
+- Automated tasks with Bash and PowerShell.
+- Configured VMware virtual machines.
+- Monitored system performance and uptime.
+Education:
+Bachelor of Science in Information Technology
+Tech Institute
+
+

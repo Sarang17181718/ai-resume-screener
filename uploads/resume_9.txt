@@ -1,0 +1,17 @@
+Name: Daniel Lee
+Email: daniel.lee@email.com
+Professional Summary:
+Machine Learning Engineer with 4 years of experience building AI-powered applications.
+Skills:
+Python, TensorFlow, PyTorch, Scikit-learn, SQL, AWS, Docker
+Experience:
+ML Engineer
+AI Innovations
+2021 - Present
+- Built NLP models for sentiment analysis.
+- Deployed ML models with Docker and AWS.
+- Optimized training pipelines for efficiency.
+- Improved model accuracy by 15%.
+Education:
+Master of Science in Artificial Intelligence
+Tech Institute

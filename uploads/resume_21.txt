@@ -1,0 +1,17 @@
+Name: Noah Wilson
+Email: noah.wilson@email.com
+Professional Summary:
+Mechanical Engineer with 7 years of experience in product design and manufacturing.
+Skills:
+AutoCAD, SolidWorks, MATLAB, Project Management
+Experience:
+Mechanical Engineer
+InnovateTech
+2017 - Present
+- Designed mechanical components using SolidWorks.
+- Conducted stress analysis with MATLAB.
+- Managed manufacturing projects.
+- Collaborated with cross-functional teams.
+Education:
+Bachelor of Mechanical Engineering
+Georgia Tech

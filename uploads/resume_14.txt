@@ -1,0 +1,17 @@
+Name: James Carter
+Email: james.carter@email.com
+Professional Summary:
+AI Engineer with 4 years of experience building machine learning models and deploying AI solutions.
+Skills:
+Python, TensorFlow, PyTorch, NLP, Computer Vision, Docker
+Experience:
+AI Engineer
+NeuralWorks
+2021 - Present
+- Developed deep learning models for image recognition.
+- Built NLP pipelines for text classification.
+- Deployed AI models using Docker.
+- Collaborated with data scientists and engineers.
+Education:
+Bachelor of Science in Artificial Intelligence
+MIT

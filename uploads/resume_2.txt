@@ -1,0 +1,19 @@
+Name: Priya Sharma
+Email: priya.sharma@email.com
+Professional Summary:
+Software Engineer with 5 years of experience in full-stack web development and building scalable applications.
+Skills:
+JavaScript, React, Node.js, MongoDB, AWS, Git, HTML/CSS
+Experience:
+Software Engineer
+WebWorks Inc.
+2020 - Present
+- Built responsive web applications using React.
+- Developed REST APIs with Node.js.
+- Deployed applications on AWS.
+- Collaborated with cross-functional teams to deliver features.
+Education:
+Bachelor of Engineering in Information Technology
+Mumbai University
+
+

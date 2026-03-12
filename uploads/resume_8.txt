@@ -1,0 +1,17 @@
+Name: Ahmed Khan
+Email: ahmed.khan@email.com
+Professional Summary:
+Cloud Architect with 8 years of experience designing scalable cloud solutions for enterprises.
+Skills:
+AWS, Azure, GCP, Terraform, Kubernetes, Docker, Networking
+Experience:
+Cloud Architect
+CloudSphere
+2017 - Present
+- Designed multi-cloud architectures.
+- Automated infrastructure with Terraform.
+- Migrated legacy apps to Kubernetes clusters.
+- Reduced cloud costs by 25%.
+Education:
+Bachelor of Engineering in Computer Science
+Tech Institute

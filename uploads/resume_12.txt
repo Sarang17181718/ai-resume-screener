@@ -1,0 +1,17 @@
+Name: Ethan Brown
+Email: ethan.brown@email.com
+Professional Summary:
+Cloud Architect with 7 years of experience designing secure and scalable cloud solutions.
+Skills:
+AWS, Azure, GCP, Terraform, Kubernetes, Networking, Security
+Experience:
+Cloud Architect
+SkyNet Technologies
+2019 - Present
+- Designed multi-cloud architectures.
+- Implemented infrastructure as code with Terraform.
+- Ensured compliance with cloud security standards.
+- Optimized cloud costs.
+Education:
+Master of Computer Engineering
+Stanford University

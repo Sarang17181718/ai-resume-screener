@@ -1,0 +1,20 @@
+Resume Sample 4
+Name: Miguel Torres
+Email: miguel.torres@email.com
+Professional Summary:
+Mobile App Developer with 4 years of experience designing and developing Android and iOS applications.
+Skills:
+Java, Kotlin, Swift, Flutter, Firebase, Git
+Experience:
+Mobile Developer
+AppVision Studios
+2021 - Present
+- Developed cross-platform apps using Flutter.
+- Integrated Firebase for authentication and analytics.
+- Published apps on Google Play and App Store.
+- Collaborated with designers to improve UI/UX.
+Education:
+Bachelor of Computer Science
+University of Barcelona
+
+

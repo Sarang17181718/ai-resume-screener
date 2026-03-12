@@ -1,0 +1,19 @@
+Name: David Nguyen
+Email: david.nguyen@email.com
+Professional Summary:
+Electrical Engineer with 6 years of experience in circuit design and embedded systems.
+Skills:
+MATLAB, PCB Design, Embedded C, IoT
+Experience:
+Electrical Engineer
+ElectroTech
+2018 - Present
+- Designed PCBs for IoT devices.
+- Programmed embedded systems in C.
+- Conducted circuit testing.
+- Collaborated with hardware teams.
+Education:
+Bachelor of Electrical Engineering
+University of Melbourne
+
+

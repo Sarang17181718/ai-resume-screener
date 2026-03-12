@@ -1,10 +1,77 @@
 from flask import send_from_directory
 from flask import Flask, render_template, request
 import os
+import csv
+import zipfile
+from flask import send_file
 from resume_screener import run_resume_screening
 
 
 app = Flask(__name__)
+
+
+@app.route("/download_top_zip")
+
+def download_top_zip():
+
+    results = app.config["LATEST_RESULTS"]
+
+    zip_filename = "top_candidates.zip"
+
+    with zipfile.ZipFile(zip_filename, "w") as zipf:
+
+        for r in results[:5]:   
+            resume_name = r[0]
+            file_path = os.path.join(app.config["UPLOAD_FOLDER"], resume_name)
+
+            if os.path.exists(file_path):
+                zipf.write(file_path, resume_name)
+
+    return send_file(zip_filename, as_attachment=True)
+
+
+def create_csv_report(results):
+
+    filepath = "ranking_report.csv"
+
+    with open(filepath, "w", newline="", encoding="utf-8") as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow([
+            "Rank",
+            "Resume",
+            "Semantic Score",
+            "Skill Score",
+            "Experience Score",
+            "Education Score",
+            "Final Score",
+            "Matched Skills",
+            "Missing Skills"
+        ])
+
+        for i, r in enumerate(results):
+
+            writer.writerow([
+                i+1,
+                r[0],
+                round(r[1],2),
+                round(r[2],2),
+                round(r[3],2),
+                round(r[4],2),
+                round(r[5],2),
+                ", ".join(r[6]),
+                ", ".join(r[7])
+            ])
+
+    return filepath
+
+@app.route("/download_report")
+def download_report():
+
+    filepath = create_csv_report(app.config["LATEST_RESULTS"])
+
+    return send_file(filepath, as_attachment=True)
 
 @app.route("/download/<filename>")
 def download_file(filename):
@@ -35,6 +102,8 @@ def upload():
         file.save(filepath)
 
     results = run_resume_screening(job_text, "uploads")
+
+    app.config["LATEST_RESULTS"] = results
 
     return render_template("results.html", results=results)
 

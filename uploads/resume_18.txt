@@ -1,0 +1,17 @@
+Name: Liam Thompson
+Email: liam.thompson@email.com
+Professional Summary:
+Blockchain Developer with 3 years of experience building decentralized applications.
+Skills:
+Solidity, Ethereum, Smart Contracts, Web3.js, Node.js
+Experience:
+Blockchain Developer
+CryptoTech Labs
+2022 - Present
+- Developed smart contracts on Ethereum.
+- Built decentralized applications using Web3.js.
+- Conducted security audits of blockchain code.
+- Integrated blockchain with web platforms.
+Education:
+Bachelor of Computer Science
+University of Toronto
