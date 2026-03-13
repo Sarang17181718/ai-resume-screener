@@ -1,58 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title> AI Screening Results</title>
+
+<title>AI Screening Results</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.container{
+width:80%;
+margin:auto;
+margin-top:40px;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#007bff;
+color:white;
+}
+
+tr:hover{
+background:#f1f1f1;
+}
+
+.download-btn{
+background:#28a745;
+color:white;
+padding:6px 12px;
+border-radius:4px;
+text-decoration:none;
+}
+
+.download-btn:hover{
+background:#1e7e34;
+}
+
+.top-buttons{
+margin-bottom:20px;
+text-align:right;
+}
+
+.report-btn{
+background:#ff9800;
+color:white;
+padding:10px 15px;
+border-radius:5px;
+text-decoration:none;
+margin-left:10px;
+}
+
+</style>
+
 </head>
 
 <body>
 
+<div class="container">
+
 <h2>Top Ranked Candidates</h2>
-<table border="1">
+
+<div class="top-buttons">
+
+<a href="/download_top_zip" class="report-btn">
+Download Top Candidates (ZIP)
+</a>
+
+<a href="/download_report" class="report-btn">
+Download Full Report (CSV)
+</a>
+
+</div>
+
+<table>
 
 <tr>
 <th>Rank</th>
 <th>Resume</th>
-<th>Semantic</th>
-<th>Skills</th>
-<th>Experience</th>
-<th>Education</th>
 <th>Final Score</th>
-<th>Matched Skills</th>
-<th>Missing Skills</th>
 <th>Download</th>
 </tr>
 
 {% for r in results %}
 
 <tr>
+
 <td>{{ loop.index }}</td>
+
 <td>{{ r[0] }}</td>
-<td>{{ r[1] }}</td>
-<td>{{ r[2] }}</td>
-<td>{{ r[3] }}</td>
-<td>{{ r[4] }}</td>
-<td>{{ r[5] }}</td>
-<td>{{ r[6] }}</td>
-<td>{{ r[7] }}</td>
+
+<td>{{ r[5] | round(2) }}</td>
+
 <td>
-<a href="{{ url_for('download_file', filename=r[0]) }}">Download</a>>
+<a href="/download/{{ r[0] }}" class="download-btn">
+Download
+</a>
 </td>
+
 </tr>
 
 {% endfor %}
 
-<br><br>
-
-<a href="/download_report">
-<button>Download Full Ranking Report</button>
-</a>
-
-<br><br>
-
-<a href="/download_top_zip">
-<button>Download Top Candidates (ZIP)</button>
-</a>
-
 </table>
+
+</div>
+
 </body>
 </html>

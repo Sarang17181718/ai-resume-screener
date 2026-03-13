@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>AI Resume Screening</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f4f6f9;
+margin:0;
+padding:0;
+}
+
+.container{
+width:60%;
+margin:auto;
+margin-top:50px;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+color:#333;
+}
+
+textarea{
+width:100%;
+padding:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+.upload-box{
+border:2px dashed #007bff;
+padding:40px;
+text-align:center;
+border-radius:10px;
+background:#fafafa;
+cursor:pointer;
+}
+
+.upload-box:hover{
+background:#eef5ff;
+}
+
+button{
+background:#007bff;
+color:white;
+padding:12px 25px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#0056b3;
+}
+
+ul{
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>AI Resume Screening</h2>
+
+<form action="/run_screening" method="post" enctype="multipart/form-data">
+
+<label>Job Description</label>
+
+<textarea name="job_text" rows="8" placeholder="Paste Job Description here..."></textarea>
+
+<br><br>
+
+<label>Upload Resumes</label>
+
+<div class="upload-box" onclick="document.getElementById('fileInput').click()">
+
+Drag & Drop resumes here<br>
+or click to upload
+
+<input type="file" name="resumes" id="fileInput" multiple hidden>
+
+</div>
+
+<ul id="fileList"></ul>
+
+<br>
+
+<button type="submit">Run AI Screening</button>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("fileInput").addEventListener("change", function(){
+
+let list = document.getElementById("fileList");
+list.innerHTML="";
+
+for(let i=0;i<this.files.length;i++){
+
+let li=document.createElement("li");
+li.textContent=this.files[i].name;
+list.appendChild(li);
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
