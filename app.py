@@ -5,9 +5,85 @@ import csv
 import zipfile
 from flask import send_file
 from resume_screener import run_resume_screening
+from flask import Flask, render_template, request, redirect
+import sqlite3
+import mysql.connector
 
 
 app = Flask(__name__)
+
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="Sarang@123",
+    database="ai_recruitment"
+)
+
+cursor = db.cursor()
+
+
+@app.route("/")
+def home():
+    return redirect("/login")
+
+@app.route("/signup", methods=["GET","POST"])
+def signup():
+
+    if request.method == "POST":
+
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
+        role = request.form["role"]
+
+        cursor.execute(
+        "INSERT INTO users(name,email,password,role) VALUES(%s,%s,%s,%s)",
+        (name,email,password,role)
+        )
+
+        db.commit()
+
+        return redirect("/login")
+
+    return render_template("signup.html")
+
+
+@app.route("/login", methods=["GET","POST"])
+def login():
+
+    if request.method == "POST":
+
+        email = request.form["email"]
+        password = request.form["password"]
+
+        cursor.execute(
+        "SELECT * FROM users WHERE email=%s AND password=%s",
+        (email,password)
+        )
+
+        user = cursor.fetchone()
+
+        if user:
+
+            role = user[4]
+
+            if role == "recruiter":
+                return "Recruiter Dashboard"
+
+            if role == "candidate":
+                return "Candidate Dashboard"
+
+        else:
+            return "Invalid login"
+
+    return render_template("login.html")
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
 
 
 @app.route("/download_top_zip")
