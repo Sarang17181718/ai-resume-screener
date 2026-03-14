@@ -89,6 +89,44 @@ def login():
 def recruiter_dashboard():
     return render_template("recruiter_dashboard.html")
 
+
+@app.route("/post_job", methods=["GET","POST"])
+def post_job():
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        description = request.form["description"]
+
+        recruiter_id = 1   # temporary (later we use session)
+
+        cursor.execute(
+        "INSERT INTO jobs(title,description,recruiter_id) VALUES(%s,%s,%s)",
+        (title,description,recruiter_id)
+        )
+
+        db.commit()
+
+        return "Job Posted Successfully"
+
+    return render_template("post_job.html")
+
+
+@app.route("/view_jobs")
+def view_jobs():
+
+    recruiter_id = 1   # temporary
+
+    cursor.execute(
+        "SELECT * FROM jobs WHERE recruiter_id=%s",
+        (recruiter_id,)
+    )
+
+    jobs = cursor.fetchall()
+
+    return render_template("view_jobs.html", jobs=jobs)
+
+
 # ---------------- AI SCREENING PAGE ----------------
 
 @app.route("/ai_screening")

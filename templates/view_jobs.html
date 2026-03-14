@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>View Jobs</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.container{
+width:80%;
+margin:auto;
+margin-top:50px;
+}
+
+.job-card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+box-shadow:0 0 8px rgba(0,0,0,0.1);
+}
+
+.job-title{
+font-size:22px;
+font-weight:bold;
+}
+
+.job-desc{
+margin-top:10px;
+color:#555;
+}
+
+.actions{
+margin-top:15px;
+}
+
+button{
+padding:8px 15px;
+margin-right:10px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+.view-btn{
+background:#007bff;
+color:white;
+}
+
+.screen-btn{
+background:#28a745;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Posted Jobs</h2>
+
+{% for job in jobs %}
+
+<div class="job-card">
+
+<div class="job-title">
+{{ job[1] }}
+</div>
+
+<div class="job-desc">
+{{ job[2] }}
+</div>
+
+<div class="actions">
+
+<button class="view-btn">View Applicants</button>
+
+<button class="screen-btn">Run AI Screening</button>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+
+</html>
