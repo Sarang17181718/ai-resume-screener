@@ -256,6 +256,110 @@ def download_report():
 
     return send_file(filepath, as_attachment=True)
 
+@app.route("/candidate")
+def candidate_dashboard():
+    return render_template("candidate_dashboard.html")
+
+
+@app.route("/candidate_jobs")
+def candidate_jobs():
+
+    cursor.execute("SELECT * FROM jobs")
+
+    jobs = cursor.fetchall()
+
+    return render_template("candidate_jobs.html", jobs=jobs)
+
+
+
+@app.route("/apply/<int:job_id>", methods=["GET","POST"])
+def apply(job_id):
+
+    if request.method == "POST":
+
+        file = request.files["resume"]
+
+        filepath = os.path.join("uploads", file.filename)
+
+        file.save(filepath)
+
+        candidate_id = 1   # temporary
+
+        cursor.execute(
+        "INSERT INTO applications(job_id,candidate_id,resume_filename) VALUES(%s,%s,%s)",
+        (job_id,candidate_id,file.filename)
+        )
+
+        db.commit()
+
+        return "Application Submitted Successfully"
+
+    return render_template("apply_job.html", job_id=job_id)
+
+
+@app.route("/view_applicants/<int:job_id>")
+def view_applicants(job_id):
+
+    cursor.execute(
+        "SELECT * FROM applications WHERE job_id=%s",
+        (job_id,)
+    )
+
+    applicants = cursor.fetchall()
+
+    return render_template(
+        "view_applicants.html",
+        applicants=applicants,
+        job_id=job_id
+    )
+@app.route("/screen_job/<int:job_id>")
+def screen_job(job_id):
+
+    import shutil
+
+    # get job description
+    cursor.execute(
+        "SELECT description FROM jobs WHERE id=%s",
+        (job_id,)
+    )
+
+    job = cursor.fetchone()
+    job_text = job[0]
+
+    # get resumes for this job
+    cursor.execute(
+        "SELECT resume_filename FROM applications WHERE job_id=%s",
+        (job_id,)
+    )
+
+    resumes = cursor.fetchall()
+
+    # create temporary folder
+    temp_folder = "temp_resumes"
+
+    if os.path.exists(temp_folder):
+        shutil.rmtree(temp_folder)
+
+    os.makedirs(temp_folder)
+
+    # copy applicant resumes into temp folder
+    for r in resumes:
+
+        filename = r[0]
+
+        source = os.path.join("uploads", filename)
+        destination = os.path.join(temp_folder, filename)
+
+        if os.path.exists(source):
+            shutil.copy(source, destination)
+
+    # run AI screening
+    results = run_resume_screening(job_text, temp_folder)
+
+    app.config["LATEST_RESULTS"] = results
+    return render_template("results.html", results=results)
+
+
 
 # ---------------- RUN APP ----------------
 

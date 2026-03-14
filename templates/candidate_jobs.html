@@ -3,7 +3,7 @@
 
 <head>
 
-<title>View Jobs</title>
+<title>Available Jobs</title>
 
 <style>
 
@@ -36,26 +36,14 @@ margin-top:10px;
 color:#555;
 }
 
-.actions{
+.apply-btn{
 margin-top:15px;
-}
-
-button{
-padding:8px 15px;
-margin-right:10px;
+padding:10px 20px;
+background:#28a745;
+color:white;
 border:none;
 border-radius:5px;
 cursor:pointer;
-}
-
-.view-btn{
-background:#007bff;
-color:white;
-}
-
-.screen-btn{
-background:#28a745;
-color:white;
 }
 
 </style>
@@ -66,7 +54,7 @@ color:white;
 
 <div class="container">
 
-<h2>Posted Jobs</h2>
+<h2>Available Jobs</h2>
 
 {% for job in jobs %}
 
@@ -80,16 +68,9 @@ color:white;
 {{ job[2] }}
 </div>
 
-<div class="actions">
-
-<a href="/view_applicants/{{job[0]}}">
-<button class="view-btn">View Applicants</button>
+<a href="/apply/{{job[0]}}">
+<button class="apply-btn">Apply</button>
 </a>
-<a href="/screen_job/{{job[0]}}">
-<button class="screen-btn">Run AI Screening</button>
-</a>
-
-</div>
 
 </div>
 

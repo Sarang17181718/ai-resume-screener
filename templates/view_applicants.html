@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Applicants</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.container{
+width:80%;
+margin:auto;
+margin-top:50px;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-bottom:15px;
+border-radius:8px;
+box-shadow:0 0 8px rgba(0,0,0,0.1);
+}
+
+.resume-name{
+font-size:18px;
+font-weight:bold;
+}
+
+button{
+margin-top:10px;
+padding:8px 15px;
+background:#007bff;
+color:white;
+border:none;
+border-radius:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Applicants</h2>
+
+{% for applicant in applicants %}
+
+<div class="card">
+
+<div class="resume-name">
+Resume: {{ applicant[3] }}
+</div>
+
+<a href="/download/{{applicant[3]}}">
+<button>Download Resume</button>
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+
+</html>
