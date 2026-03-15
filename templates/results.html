@@ -3,7 +3,7 @@
 <head>
 
 <title>AI Screening Results</title>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 
 body{
@@ -126,6 +126,60 @@ Download
 </table>
 
 </div>
+<h2>Candidate Score Chart</h2>
 
+<canvas id="scoreChart" width="400" height="200"></canvas>
+
+<script>
+
+let resumes = [
+{% for r in results %}
+"{{ r[0] }}",
+{% endfor %}
+];
+
+let scores = [
+{% for r in results %}
+{{ r[5] }},
+{% endfor %}
+];
+
+const ctx = document.getElementById('scoreChart').getContext('2d');
+
+new Chart(ctx, {
+
+type: 'bar',
+
+data: {
+
+labels: resumes,
+
+datasets: [{
+
+label: 'Candidate Score',
+
+data: scores,
+
+borderWidth: 1
+
+}]
+
+},
+
+options: {
+
+scales: {
+
+y: {
+beginAtZero: true
+}
+
+}
+
+}
+
+});
+
+</script>
 </body>
 </html>
