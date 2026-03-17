@@ -101,6 +101,10 @@ Download Full Report (CSV)
 <th>Resume</th>
 <th>Final Score</th>
 <th>Download</th>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>action</th>
 </tr>
 
 {% for r in results %}
@@ -118,7 +122,18 @@ Download Full Report (CSV)
 Download
 </a>
 </td>
+<td>{{ r[8] }}</td>
+<td>{{ r[9] }}</td>
+<td>{{ r[10] }}</td>
+<td>
+<a href="/shortlist/{{ r[0] }}">
+<button style="background:green;color:white;">Shortlist</button>
+</a>
 
+<a href="/reject/{{ r[0] }}">
+<button style="background:red;color:white;">Reject</button>
+</a>
+</td>
 </tr>
 
 {% endfor %}
@@ -127,57 +142,39 @@ Download
 
 </div>
 <h2>Candidate Score Chart</h2>
-
 <canvas id="scoreChart" width="400" height="200"></canvas>
-
 <script>
 
-let resumes = [
-{% for r in results %}
-"{{ r[0] }}",
-{% endfor %}
-];
+const data = {{ results | tojson }};
 
-let scores = [
-{% for r in results %}
-{{ r[5] }},
-{% endfor %}
-];
+const resumes = data.map(function(r){
+    return r[0];
+});
+
+const scores = data.map(function(r){
+    return r[5];
+});
 
 const ctx = document.getElementById('scoreChart').getContext('2d');
 
 new Chart(ctx, {
-
-type: 'bar',
-
-data: {
-
-labels: resumes,
-
-datasets: [{
-
-label: 'Candidate Score',
-
-data: scores,
-
-borderWidth: 1
-
-}]
-
-},
-
-options: {
-
-scales: {
-
-y: {
-beginAtZero: true
-}
-
-}
-
-}
-
+  type: 'bar',
+  data: {
+    labels: resumes,
+    datasets: [{
+      label: 'Candidate Score',
+      data: scores,
+      backgroundColor: 'rgba(54,162,235,0.6)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
 });
 
 </script>

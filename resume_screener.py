@@ -3,8 +3,7 @@ import os
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import pdfplumber
-
-
+from resume_parser import parse_resume
 skills_list = [
     "python",
     "sql",
@@ -131,9 +130,16 @@ def run_resume_screening(job_text, resume_folder):
 
             # extract resume text
             resume_text = extract_text(os.path.join(resume_folder, resume_filename))
+            candidate_info = parse_resume(resume_text)
+            name = candidate_info["name"]
+            email = candidate_info["email"]
+            phone = candidate_info["phone"]
+            skills = candidate_info["skills"]
+
             resume_skills = extract_skills(resume_text)
             matched_skills = list(set(resume_skills) & set(job_skills))
             missing_skills = list(set(job_skills) - set(resume_skills))
+            
 
 
 
@@ -159,17 +165,29 @@ def run_resume_screening(job_text, resume_folder):
             )
 
             results.append(
-                (
-                    resume_filename,
-                    semantic_score,
-                    skill_score,
-                    exp_score,
-                    edu_score,
-                    final_score,
-                    matched_skills,
-                    missing_skills
-                    )
-                    )
+                (resume_filename,
+                 float(semantic_score),
+                 float(skill_score),
+                 float(exp_score),
+                 float(edu_score),
+                 float(final_score),
+                 matched_skills,
+                 missing_skills,
+                 name,
+                 email,
+                 phone
+                 )
+                 )
+
+
+
+
+
+
+
+
+
+
 
 
     

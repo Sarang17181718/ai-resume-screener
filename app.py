@@ -359,7 +359,52 @@ def screen_job(job_id):
     app.config["LATEST_RESULTS"] = results
     return render_template("results.html", results=results)
 
+'''@app.route("/shortlist/<int:app_id>")
+def shortlist(app_id):
 
+    cursor.execute(
+        "UPDATE applications SET status='shortlisted' WHERE id=%s",
+        (app_id,)
+    )
+
+    db.commit()
+
+    return redirect(request.referrer)'''
+@app.route("/shortlist/<filename>")
+def shortlist(filename):
+
+    cursor.execute(
+        "UPDATE applications SET status='shortlisted' WHERE resume_filename=%s",
+        (filename,)
+    )
+
+    db.commit()
+
+    return redirect(request.referrer)
+
+'''@app.route("/reject/<int:app_id>")
+def reject(app_id):
+
+    cursor.execute(
+        "UPDATE applications SET status='rejected' WHERE id=%s",
+        (app_id,)
+    )
+
+    db.commit()
+
+    return redirect(request.referrer)'''
+
+@app.route("/reject/<filename>")
+def reject(filename):
+
+    cursor.execute(
+        "UPDATE applications SET status='rejected' WHERE resume_filename=%s",
+        (filename,)
+    )
+
+    db.commit()
+
+    return redirect(request.referrer)
 
 # ---------------- RUN APP ----------------
 

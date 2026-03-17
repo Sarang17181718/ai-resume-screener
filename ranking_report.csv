@@ -1,6 +1,0 @@
-Rank,Resume,Semantic Score,Skill Score,Experience Score,Education Score,Final Score,Matched Skills,Missing Skills
-1,resume_1.txt,86.11,60,75,50,72.44,"aws, docker, kubernetes, python",
-2,resume_4.txt,48.67,40,100,50,56.47,"aws, python","docker, kubernetes"
-3,resume_2.txt,52.96,20,100,50,52.18,aws,"docker, kubernetes, python"
-4,resume_6.txt,35.4,0,100,25,36.66,,"kubernetes, aws, docker, python"
-5,resume_5.txt,36.71,0,75,50,34.69,,"kubernetes, aws, docker, python"

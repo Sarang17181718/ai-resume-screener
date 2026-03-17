@@ -56,12 +56,19 @@ border-radius:5px;
 
 <div class="resume-name">
 Resume: {{ applicant[3] }}
+<p>Status: {{ applicant[4] }}</p>
 </div>
 
 <a href="/download/{{applicant[3]}}">
 <button>Download Resume</button>
 </a>
+<a href="/shortlist/{{applicant[0]}}">
+<button style="background:green;color:white;">Shortlist</button>
+</a>
 
+<a href="/reject/{{applicant[0]}}">
+<button style="background:red;color:white;">Reject</button>
+</a>
 </div>
 
 {% endfor %}
