@@ -1,0 +1,17 @@
+Name: Olivia Martin
+Email: olivia.martin@email.com
+Professional Summary:
+Business Analyst with 6 years of experience analyzing business processes and delivering data-driven solutions.
+Skills:
+SQL, Excel, Power BI, Requirements Gathering, Agile, Communication
+Experience:
+Business Analyst
+DataBridge Solutions
+2018 - Present
+- Gathered requirements from stakeholders.
+- Built dashboards in Power BI.
+- Conducted gap analysis for process improvements.
+- Supported agile teams with documentation.
+Education:
+MBA in Business Analytics
+University of Chicago

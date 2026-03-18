@@ -1,3 +1,4 @@
+
 import pdfplumber
 import os
 from sentence_transformers import SentenceTransformer
@@ -113,7 +114,7 @@ def compute_education_score(resume_text):
 
 
 
-def run_resume_screening(job_text, resume_folder):
+def run_resume_screening(job_text, applications):
     
     job_skills = extract_skills(job_text)
     print("Job Skills:", job_skills)
@@ -124,18 +125,28 @@ def run_resume_screening(job_text, resume_folder):
 
     results = []
 
-    for resume_filename in os.listdir(resume_folder):
+    for app in applications:
+        app_id = app[0]
+        resume_filename = app[1]
+        file_path = os.path.join("uploads", resume_filename)
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            resume_text = f.read()
+        
+
+    
 
         if resume_filename.endswith(".pdf") or resume_filename.endswith(".txt"):
+            file_path = os.path.join("uploads", resume_filename)
 
             # extract resume text
-            resume_text = extract_text(os.path.join(resume_folder, resume_filename))
+            resume_text = extract_text(file_path)
             candidate_info = parse_resume(resume_text)
             name = candidate_info["name"]
             email = candidate_info["email"]
             phone = candidate_info["phone"]
             skills = candidate_info["skills"]
 
+    
             resume_skills = extract_skills(resume_text)
             matched_skills = list(set(resume_skills) & set(job_skills))
             missing_skills = list(set(job_skills) - set(resume_skills))
@@ -165,7 +176,8 @@ def run_resume_screening(job_text, resume_folder):
             )
 
             results.append(
-                (resume_filename,
+                (app_id,
+                 resume_filename,
                  float(semantic_score),
                  float(skill_score),
                  float(exp_score),
@@ -175,32 +187,11 @@ def run_resume_screening(job_text, resume_folder):
                  missing_skills,
                  name,
                  email,
-                 phone
+                 phone,
                  )
                  )
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-
 
       
-    results.sort(key=lambda x: x[5], reverse=True)
+    results.sort(key=lambda x: x[6], reverse=True)
 
     return results[:10]

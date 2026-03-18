@@ -4,11 +4,23 @@ import csv
 import zipfile
 import mysql.connector
 from resume_screener import run_resume_screening
+from flask_mail import Mail, Message
+from flask import session
 
 app = Flask(__name__)
-
+app.secret_key="mysecrete123"
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'sarangbhokse29@gmail.com'
+app.config['MAIL_PASSWORD'] = 'ygex ozdp hrxi byhe'
+mail=Mail(app)
+
+app.config['MAIL_DEBUG'] = True
+
 
 
 # ---------------- DATABASE CONNECTION ----------------
@@ -69,6 +81,9 @@ def login():
         user = cursor.fetchone()
 
         if user:
+            session["user_id"] = user[0]
+            session["role"] = user[4]
+    
 
             role = user[4]
 
@@ -258,7 +273,22 @@ def download_report():
 
 @app.route("/candidate")
 def candidate_dashboard():
-    return render_template("candidate_dashboard.html")
+
+    candidate_id = session["user_id"]
+
+    cursor.execute("""
+        SELECT jobs.title, applications.status
+        FROM applications
+        JOIN jobs ON applications.job_id = jobs.id
+        WHERE applications.candidate_id = %s
+    """, (candidate_id,))
+
+    applications = cursor.fetchall()
+
+    return render_template(
+        "candidate_dashboard.html",
+        applications=applications
+    )
 
 
 @app.route("/candidate_jobs")
@@ -283,7 +313,7 @@ def apply(job_id):
 
         file.save(filepath)
 
-        candidate_id = 1   # temporary
+        candidate_id = session["user_id"]
 
         cursor.execute(
         "INSERT INTO applications(job_id,candidate_id,resume_filename) VALUES(%s,%s,%s)",
@@ -354,57 +384,107 @@ def screen_job(job_id):
             shutil.copy(source, destination)
 
     # run AI screening
-    results = run_resume_screening(job_text, temp_folder)
+    cursor.execute("""
+                   SELECT id, resume_filename
+                   FROM applications
+                   WHERE job_id = %s
+                   """, (job_id,))
+    applications = cursor.fetchall()
+    results=run_resume_screening(job_text,applications)
+
+
+
+
+
 
     app.config["LATEST_RESULTS"] = results
-    return render_template("results.html", results=results)
+    return render_template("results.html", results=results,job_id=job_id)
 
-'''@app.route("/shortlist/<int:app_id>")
-def shortlist(app_id):
 
-    cursor.execute(
-        "UPDATE applications SET status='shortlisted' WHERE id=%s",
-        (app_id,)
+
+@app.route("/shortlist/<int:job_id>/<int:app_id>")
+def shortlist(job_id,app_id):
+    cursor.execute("UPDATE applications SET status='shortlisted' WHERE id=%s", (app_id,))
+    db.commit()
+    # GET candidate email
+    cursor.execute("""
+        SELECT users.email, jobs.title
+        FROM applications
+        JOIN users ON applications.candidate_id = users.id
+        JOIN jobs ON applications.job_id = jobs.id
+        WHERE applications.id = %s
+    """, (app_id,))
+
+    data = cursor.fetchone()
+    email = data[0]
+    job_title = data[1]
+
+    # SEND EMAIL
+    msg = Message(
+        subject="Congratulations! You are Shortlisted 🎉",
+        sender=app.config['MAIL_USERNAME'],
+        recipients=[email]
     )
 
-    db.commit()
+    msg.body = f"""
+    Congratulations!
 
-    return redirect(request.referrer)'''
-@app.route("/shortlist/<filename>")
-def shortlist(filename):
+    You have been shortlisted for the position: {job_title}
 
-    cursor.execute(
-        "UPDATE applications SET status='shortlisted' WHERE resume_filename=%s",
-        (filename,)
-    )
+    Please wait for further communication.
 
-    db.commit()
+    Regards,
+    Recruitment Team
+    """
+
+    mail.send(msg)
 
     return redirect(request.referrer)
 
-'''@app.route("/reject/<int:app_id>")
-def reject(app_id):
 
-    cursor.execute(
-        "UPDATE applications SET status='rejected' WHERE id=%s",
-        (app_id,)
-    )
 
+@app.route("/reject/<int:job_id>/<int:app_id>")
+def reject(job_id,app_id):
+
+    cursor.execute("UPDATE applications SET status='rejected' WHERE id=%s", (app_id,))
     db.commit()
 
-    return redirect(request.referrer)'''
+    # GET candidate email
+    cursor.execute("""
+        SELECT users.email, jobs.title
+        FROM applications
+        JOIN users ON applications.candidate_id = users.id
+        JOIN jobs ON applications.job_id = jobs.id
+        WHERE applications.id = %s
+    """, (app_id,))
 
-@app.route("/reject/<filename>")
-def reject(filename):
+    data = cursor.fetchone()
+    email = data[0]
+    job_title = data[1]
 
-    cursor.execute(
-        "UPDATE applications SET status='rejected' WHERE resume_filename=%s",
-        (filename,)
+    # SEND EMAIL
+    msg = Message(
+        subject="Application Update",
+        sender=app.config['MAIL_USERNAME'],
+        recipients=[email]
     )
 
-    db.commit()
+    msg.body = f"""
+    Thank you for applying for {job_title}.
+
+    We regret to inform you that you have not been selected.
+
+    We encourage you to apply again in the future.
+
+    Regards,
+    Recruitment Team
+    """
+
+    mail.send(msg)
 
     return redirect(request.referrer)
+
+
 
 # ---------------- RUN APP ----------------
 

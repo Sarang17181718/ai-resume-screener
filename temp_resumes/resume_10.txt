@@ -1,0 +1,17 @@
+Name: Hannah Wilson
+Email: hannah.wilson@email.com
+Professional Summary:
+Business Analyst with 6 years of experience analyzing requirements and improving business processes.
+Skills:
+SQL, Excel, Power BI, Requirements Gathering, Agile, Communication
+Experience:
+Business Analyst
+Enterprise Solutions
+2019 - Present
+- Gathered requirements from stakeholders.
+- Created dashboards with Power BI.
+- Analyzed workflows to improve efficiency.
+- Supported Agile development teams.
+Education:
+Bachelor of Business Administration
+Business University

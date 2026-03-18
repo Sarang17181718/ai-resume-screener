@@ -125,14 +125,15 @@ Download
 <td>{{ r[8] }}</td>
 <td>{{ r[9] }}</td>
 <td>{{ r[10] }}</td>
-<td>
-<a href="/shortlist/{{ r[0] }}">
-<button style="background:green;color:white;">Shortlist</button>
-</a>
 
-<a href="/reject/{{ r[0] }}">
-<button style="background:red;color:white;">Reject</button>
-</a>
+<td>
+    <a href="/shortlist/{{job_id}}/{{ r[0] }}">
+        <button style="background:green;color:white;">Shortlist</button>
+    </a>
+
+    <a href="/reject/{{job_id}}/{{ r[0] }}">
+        <button style="background:red;color:white;">Reject</button>
+    </a>
 </td>
 </tr>
 

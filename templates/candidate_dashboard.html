@@ -58,7 +58,37 @@ background:#0056b3;
 <a href="/candidate_jobs">
 <button>Browse Available Jobs</button>
 </a>
+<h3 style="margin-top:40px;">My Applications</h3>
 
+<table style="width:100%; margin-top:20px; border-collapse:collapse;">
+
+<tr>
+<th>Job</th>
+<th>Status</th>
+</tr>
+
+{% for job, status in applications %}
+
+<tr>
+<td>{{ job }}</td>
+
+<td style="
+{% if status == 'shortlisted' %}
+color:green;font-weight:bold;
+{% elif status == 'rejected' %}
+color:red;font-weight:bold;
+{% else %}
+color:orange;font-weight:bold;
+{% endif %}
+">
+{{ status }}
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
 </div>
 
 </div>
