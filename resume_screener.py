@@ -128,7 +128,11 @@ def run_resume_screening(job_text, applications):
     for app in applications:
         app_id = app[0]
         resume_filename = app[1]
-        file_path = os.path.join("uploads", resume_filename)
+        file_path = os.path.join(os.getcwd(),"uploads", resume_filename)
+
+        print("Looking for:", file_path)
+        print("Exists:", os.path.exists(file_path))
+
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             resume_text = f.read()
         

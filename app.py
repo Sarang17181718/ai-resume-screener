@@ -7,10 +7,13 @@ from resume_screener import run_resume_screening
 from flask_mail import Mail, Message
 from flask import session
 
+
 app = Flask(__name__)
 app.secret_key="mysecrete123"
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -113,8 +116,7 @@ def post_job():
         title = request.form["title"]
         description = request.form["description"]
 
-        recruiter_id = 1   # temporary (later we use session)
-
+        recruiter_id =session["user_id"]
         cursor.execute(
         "INSERT INTO jobs(title,description,recruiter_id) VALUES(%s,%s,%s)",
         (title,description,recruiter_id)
@@ -122,19 +124,20 @@ def post_job():
 
         db.commit()
 
-        return "Job Posted Successfully"
+        return redirect("/view_jobs")
 
     return render_template("post_job.html")
 
 
 @app.route("/view_jobs")
 def view_jobs():
+    if "user_id" not in session or session["role"] != "recruiter":
+        return "Access Denied", 403
 
-    recruiter_id = 1   # temporary
-
+    recruiter_id = session["user_id"]   
     cursor.execute(
         "SELECT * FROM jobs WHERE recruiter_id=%s",
-        (recruiter_id,)
+        (session["user_id"],)
     )
 
     jobs = cursor.fetchall()
@@ -327,13 +330,33 @@ def apply(job_id):
     return render_template("apply_job.html", job_id=job_id)
 
 
+
+
 @app.route("/view_applicants/<int:job_id>")
 def view_applicants(job_id):
 
-    cursor.execute(
-        "SELECT * FROM applications WHERE job_id=%s",
-        (job_id,)
-    )
+    # 🔐 Check login
+    if "user_id" not in session or session["role"] != "recruiter":
+        return "Access Denied", 403
+
+    recruiter_id = session["user_id"]
+
+    # 🔐 Ensure recruiter owns this job
+    cursor.execute("""
+        SELECT id FROM jobs
+        WHERE id=%s AND recruiter_id=%s
+    """, (job_id, recruiter_id))
+
+    job = cursor.fetchone()
+
+    if not job:
+        return "Unauthorized Access", 403
+
+    # ✅ Fetch applicants safely
+    cursor.execute("""
+        SELECT * FROM applications
+        WHERE job_id=%s
+    """, (job_id,))
 
     applicants = cursor.fetchall()
 
@@ -342,8 +365,23 @@ def view_applicants(job_id):
         applicants=applicants,
         job_id=job_id
     )
+
+
+
 @app.route("/screen_job/<int:job_id>")
 def screen_job(job_id):
+    recruiter_id = session["user_id"]
+
+    # check job ownership
+    cursor.execute(
+        "SELECT * FROM jobs WHERE id=%s AND recruiter_id=%s",
+        (job_id, recruiter_id)
+    )
+
+    job = cursor.fetchone()
+
+    if not job:
+        return "Unauthorized Access", 403
 
     import shutil
 
@@ -403,10 +441,35 @@ def screen_job(job_id):
 
 
 @app.route("/shortlist/<int:job_id>/<int:app_id>")
-def shortlist(job_id,app_id):
-    cursor.execute("UPDATE applications SET status='shortlisted' WHERE id=%s", (app_id,))
+def shortlist(job_id, app_id):
+
+    # 🔐 Check login + role
+    if "user_id" not in session or session["role"] != "recruiter":
+        return "Access Denied", 403
+
+    recruiter_id = session["user_id"]
+
+    # 🔐 Check if this job belongs to this recruiter
+    cursor.execute("""
+        SELECT id FROM jobs 
+        WHERE id=%s AND recruiter_id=%s
+    """, (job_id, recruiter_id))
+
+    job = cursor.fetchone()
+
+    if not job:
+        return "Unauthorized Access", 403
+
+    # ✅ Now safe to update
+    cursor.execute("""
+        UPDATE applications 
+        SET status='shortlisted' 
+        WHERE id=%s AND job_id=%s
+    """, (app_id, job_id))
+
     db.commit()
-    # GET candidate email
+
+    # 📩 GET candidate email
     cursor.execute("""
         SELECT users.email, jobs.title
         FROM applications
@@ -416,71 +479,100 @@ def shortlist(job_id,app_id):
     """, (app_id,))
 
     data = cursor.fetchone()
-    email = data[0]
-    job_title = data[1]
 
-    # SEND EMAIL
-    msg = Message(
-        subject="Congratulations! You are Shortlisted 🎉",
-        sender=app.config['MAIL_USERNAME'],
-        recipients=[email]
-    )
+    if data:
+        email = data[0]
+        job_title = data[1]
 
-    msg.body = f"""
-    Congratulations!
+        # 📧 SEND EMAIL
+        msg = Message(
+            subject="Congratulations! You are Shortlisted 🎉",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
 
-    You have been shortlisted for the position: {job_title}
+        msg.body = f"""
+        Congratulations!
 
-    Please wait for further communication.
+        You have been shortlisted for the position: {job_title}
 
-    Regards,
-    Recruitment Team
-    """
+        Please wait for further communication.
 
-    mail.send(msg)
+        Regards,
+        Recruitment Team
+        """
+
+        mail.send(msg)
 
     return redirect(request.referrer)
 
 
 
 @app.route("/reject/<int:job_id>/<int:app_id>")
-def reject(job_id,app_id):
+def reject(job_id, app_id):
 
-    cursor.execute("UPDATE applications SET status='rejected' WHERE id=%s", (app_id,))
+    # 🔐 Check login + role
+    if "user_id" not in session or session["role"] != "recruiter":
+        return "Access Denied", 403
+
+    recruiter_id = session["user_id"]
+
+    # 🔐 Check if this job belongs to this recruiter
+    cursor.execute("""
+        SELECT id FROM jobs 
+        WHERE id=%s AND recruiter_id=%s
+    """, (job_id, recruiter_id))
+
+    job = cursor.fetchone()
+
+    if not job:
+        return "Unauthorized Access", 403
+
+    # ✅ Now safe to update
+    cursor.execute("""
+        UPDATE applications 
+        SET status='rejected' 
+        WHERE id=%s AND job_id=%s
+    """, (app_id, job_id))
+
     db.commit()
 
-    # GET candidate email
+    # 📩 GET candidate email + job title
     cursor.execute("""
         SELECT users.email, jobs.title
         FROM applications
         JOIN users ON applications.candidate_id = users.id
         JOIN jobs ON applications.job_id = jobs.id
-        WHERE applications.id = %s
-    """, (app_id,))
+        WHERE applications.id = %s AND applications.job_id = %s
+    """, (app_id, job_id))
 
     data = cursor.fetchone()
-    email = data[0]
-    job_title = data[1]
 
-    # SEND EMAIL
-    msg = Message(
-        subject="Application Update",
-        sender=app.config['MAIL_USERNAME'],
-        recipients=[email]
-    )
+    if data:
+        email = data[0]
+        job_title = data[1]
 
-    msg.body = f"""
-    Thank you for applying for {job_title}.
+        # 📧 SEND EMAIL
+        msg = Message(
+            subject="Application Update",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
 
-    We regret to inform you that you have not been selected.
+        msg.body = f"""
+        Dear Candidate,
 
-    We encourage you to apply again in the future.
+        Thank you for applying for the position: {job_title}
 
-    Regards,
-    Recruitment Team
-    """
+        We regret to inform you that your application has not been selected at this time.
 
-    mail.send(msg)
+        We encourage you to apply for future opportunities.
+
+        Regards,
+        Recruitment Team
+        """
+
+        mail.send(msg)
 
     return redirect(request.referrer)
 

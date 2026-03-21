@@ -113,18 +113,21 @@ Download Full Report (CSV)
 
 <td>{{ loop.index }}</td>
 
-<td>{{ r[0] }}</td>
+<td>{{ r[1] }}</td> <!-- Resume filename -->
 
-<td>{{ r[5] | round(2) }}</td>
+<td>{{ r[6] | round(2) }}</td> <!-- Final Score -->
 
 <td>
-<a href="/download/{{ r[0] }}" class="download-btn">
+<a href="/download/{{ r[1] }}" class="download-btn">
 Download
 </a>
 </td>
-<td>{{ r[8] }}</td>
-<td>{{ r[9] }}</td>
-<td>{{ r[10] }}</td>
+
+<td>{{ r[9] }}</td> <!-- Name -->
+
+<td>{{ r[10] }}</td> <!-- Email -->
+
+<td>{{ r[11] }}</td> <!-- Phone -->
 
 <td>
     <a href="/shortlist/{{job_id}}/{{ r[0] }}">
@@ -135,6 +138,7 @@ Download
         <button style="background:red;color:white;">Reject</button>
     </a>
 </td>
+
 </tr>
 
 {% endfor %}
@@ -149,11 +153,11 @@ Download
 const data = {{ results | tojson }};
 
 const resumes = data.map(function(r){
-    return r[0];
+    return r[1];
 });
 
 const scores = data.map(function(r){
-    return r[5];
+    return r[6];
 });
 
 const ctx = document.getElementById('scoreChart').getContext('2d');
