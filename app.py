@@ -165,14 +165,15 @@ def run_screening():
     for file in os.listdir(UPLOAD_FOLDER):
         os.remove(os.path.join(UPLOAD_FOLDER, file))
 
-    # save new resumes
-    for file in files:
+    applications = []
+    for i, file in enumerate(files):
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(filepath)
+    
+        applications.append((i, file.filename))  # fake app_id
+    results = run_resume_screening(job_text, applications)
 
-    results = run_resume_screening(job_text, UPLOAD_FOLDER)
-
-    # store results for downloads
+    
     app.config["LATEST_RESULTS"] = results
 
     return render_template("results.html", results=results)
@@ -237,14 +238,14 @@ def create_excel_report(results):
 
         ws.append([
             i+1,
-            r[0],
-            round(r[1],2),
+            r[1],
             round(r[2],2),
             round(r[3],2),
             round(r[4],2),
             round(r[5],2),
-            ", ".join(r[6]),
-            ", ".join(r[7])
+            round(r[6],2),
+            ", ".join(r[7]),
+            ", ".join(r[8])
         ])
 
     
@@ -448,6 +449,10 @@ def shortlist(job_id, app_id):
         return "Access Denied", 403
 
     recruiter_id = session["user_id"]
+    cursor.execute("SELECT name, email FROM users WHERE id=%s", (recruiter_id,))
+    recruiter = cursor.fetchone()
+    recruiter_name = recruiter[0]
+    recruiter_email = recruiter[1]
 
     # 🔐 Check if this job belongs to this recruiter
     cursor.execute("""
@@ -487,17 +492,16 @@ def shortlist(job_id, app_id):
         # 📧 SEND EMAIL
         msg = Message(
             subject="Congratulations! You are Shortlisted 🎉",
-            sender=app.config['MAIL_USERNAME'],
+            sender=("AI Recruitment System",app.config['MAIL_USERNAME']),
             recipients=[email]
         )
 
         msg.body = f"""
         Congratulations!
-
         You have been shortlisted for the position: {job_title}
-
+        Recruiter: {recruiter_name}
+        Contact Email: {recruiter_email}
         Please wait for further communication.
-
         Regards,
         Recruitment Team
         """
@@ -516,6 +520,10 @@ def reject(job_id, app_id):
         return "Access Denied", 403
 
     recruiter_id = session["user_id"]
+    cursor.execute("SELECT name, email FROM users WHERE id=%s", (recruiter_id,))
+    recruiter = cursor.fetchone()
+    recruiter_name = recruiter[0]
+    recruiter_email = recruiter[1]
 
     # 🔐 Check if this job belongs to this recruiter
     cursor.execute("""
@@ -555,7 +563,7 @@ def reject(job_id, app_id):
         # 📧 SEND EMAIL
         msg = Message(
             subject="Application Update",
-            sender=app.config['MAIL_USERNAME'],
+            sender=("AI Recruitment System",app.config['MAIL_USERNAME']),
             recipients=[email]
         )
 
@@ -565,6 +573,8 @@ def reject(job_id, app_id):
         Thank you for applying for the position: {job_title}
 
         We regret to inform you that your application has not been selected at this time.
+        Recruiter: {recruiter_name}
+        contact Email: {recruiter_email}
 
         We encourage you to apply for future opportunities.
 
