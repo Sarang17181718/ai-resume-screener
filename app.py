@@ -6,6 +6,7 @@ import mysql.connector
 from resume_screener import run_resume_screening
 from flask_mail import Mail, Message
 from flask import session
+import time
 
 
 app = Flask(__name__)
@@ -198,7 +199,7 @@ def download_top_zip():
 
         for r in results[:5]:
 
-            resume_name = r[0]
+            resume_name = r[1]
             file_path = os.path.join(app.config["UPLOAD_FOLDER"], resume_name)
 
             if os.path.exists(file_path):
@@ -298,30 +299,58 @@ def candidate_dashboard():
 @app.route("/candidate_jobs")
 def candidate_jobs():
 
-    cursor.execute("SELECT * FROM jobs")
+    candidate_id = session["user_id"]
 
+    # all jobs
+    cursor.execute("SELECT * FROM jobs")
     jobs = cursor.fetchall()
 
-    return render_template("candidate_jobs.html", jobs=jobs)
+    # jobs already applied by this candidate
+    cursor.execute("""
+        SELECT job_id FROM applications
+        WHERE candidate_id=%s
+    """, (candidate_id,))
 
+    applied_jobs = cursor.fetchall()
 
+    # convert to list → [1,2,3]
+    applied_job_ids = [j[0] for j in applied_jobs]
+
+    return render_template(
+        "candidate_jobs.html",
+        jobs=jobs,
+        applied_job_ids=applied_job_ids
+    )
 
 @app.route("/apply/<int:job_id>", methods=["GET","POST"])
+
 def apply(job_id):
 
     if request.method == "POST":
+        candidate_id = session["user_id"]
+
+        cursor.execute("""
+            SELECT * FROM applications
+            WHERE job_id=%s AND candidate_id=%s
+        """, (job_id, candidate_id))
+
+        existing=cursor.fetchone()
+        if existing:
+            return "You have already applied for this job"
+
 
         file = request.files["resume"]
+        unique_name=str(int(time.time())) + "_" + file.filename
 
-        filepath = os.path.join("uploads", file.filename)
+        filepath = os.path.join("uploads", unique_name)
 
         file.save(filepath)
 
-        candidate_id = session["user_id"]
+        
 
         cursor.execute(
         "INSERT INTO applications(job_id,candidate_id,resume_filename) VALUES(%s,%s,%s)",
-        (job_id,candidate_id,file.filename)
+        (job_id,candidate_id,unique_name)
         )
 
         db.commit()
@@ -586,7 +615,10 @@ def reject(job_id, app_id):
 
     return redirect(request.referrer)
 
-
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
 
 # ---------------- RUN APP ----------------
 

@@ -133,11 +133,12 @@ def run_resume_screening(job_text, applications):
         print("Looking for:", file_path)
         print("Exists:", os.path.exists(file_path))
 
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            resume_text = f.read()
-        
+        if not os.path.exists(file_path):
+            print("missing file:", file_path)
+            continue
 
-    
+        resume_text=extract_text(file_path)
+        
 
         if resume_filename.endswith(".pdf") or resume_filename.endswith(".txt"):
             file_path = os.path.join("uploads", resume_filename)

@@ -59,7 +59,9 @@ background:#0056b3;
 <button>Browse Available Jobs</button>
 </a>
 <h3 style="margin-top:40px;">My Applications</h3>
-
+<a href="/logout">
+<button style="background:red;">Logout</button>
+</a>
 <table style="width:100%; margin-top:20px; border-collapse:collapse;">
 
 <tr>
@@ -71,9 +73,7 @@ background:#0056b3;
 
 <tr>
 <td>{{ job }}</td>
-<a href="/logout">
-<button style="background:red;">Logout</button>
-</a>
+
 <td style="
 {% if status == 'shortlisted' %}
 color:green;font-weight:bold;

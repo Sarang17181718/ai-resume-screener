@@ -46,6 +46,12 @@ border-radius:5px;
 cursor:pointer;
 }
 
+.applied-btn {
+    background-color: gray;
+    color: white;
+    cursor: not-allowed;
+}
+
 </style>
 
 </head>
@@ -68,9 +74,13 @@ cursor:pointer;
 {{ job[2] }}
 </div>
 
-<a href="/apply/{{job[0]}}">
-<button class="apply-btn">Apply</button>
-</a>
+{% if job[0] in applied_job_ids %}
+    <button class="applied-btn">Applied</button>
+{% else %}
+    <a href="/apply/{{ job[0] }}">
+        <button class="apply-btn">Apply</button>
+    </a>
+{% endif %}
 
 </div>
 
