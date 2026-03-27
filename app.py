@@ -30,10 +30,10 @@ app.config['MAIL_DEBUG'] = True
 # ---------------- DATABASE CONNECTION ----------------
 
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Sarang@123",
-    database="ai_recruitment"
+    host=os.environ.get("DB_HOST"),
+    user=os.environ.get("DB_USER"),
+    password=os.environ.get("DB_PASSWORD"),
+    database=os.environ.get("DB_NAME")
 )
 
 cursor = db.cursor()
