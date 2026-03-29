@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, send_file, send_from_directory
+from flask import Flask,render_template, request, redirect, send_file, send_from_directory
 import os
 import csv
 import zipfile
@@ -620,12 +620,11 @@ def logout():
     session.clear()
     return redirect("/login")
 
+# ---------------- RUN APP ----------------
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
-
-# ---------------- RUN APP ----------------
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
