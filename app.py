@@ -8,6 +8,14 @@ from flask_mail import Mail, Message
 from flask import session
 import time
 
+def get_db():
+    return mysql.connector.connect(
+        host=os.environ.get("DB_HOST"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASSWORD"),
+        database=os.environ.get("DB_NAME")
+    )
+
 
 app = Flask(__name__)
 app.secret_key="mysecrete123"
@@ -20,7 +28,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'sarangbhokse29@gmail.com'
-app.config['MAIL_PASSWORD'] = 'ygex ozdp hrxi byhe'
+app.config['MAIL_PASSWORD'] =os.environ.get("ygex ozdp hrxi byhe") 
 mail=Mail(app)
 
 app.config['MAIL_DEBUG'] = True
@@ -29,14 +37,6 @@ app.config['MAIL_DEBUG'] = True
 
 # ---------------- DATABASE CONNECTION ----------------
 
-db = mysql.connector.connect(
-    host=os.environ.get("DB_HOST"),
-    user=os.environ.get("DB_USER"),
-    password=os.environ.get("DB_PASSWORD"),
-    database=os.environ.get("DB_NAME")
-)
-
-cursor = db.cursor()
 
 # ---------------- HOME ----------------
 @app.route("/")
@@ -56,10 +56,11 @@ def signup():
         password = request.form["password"]
         role = request.form["role"]
 
-        cursor.execute(
-        "INSERT INTO users(name,email,password,role) VALUES(%s,%s,%s,%s)",
-        (name,email,password,role)
-        )
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO users(name,email,password,role) VALUES(%s,%s,%s,%s)",
+        (name,email,password,role))
+        
 
         db.commit()
 
@@ -77,10 +78,12 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        cursor.execute(
-        "SELECT * FROM users WHERE email=%s AND password=%s",
-        (email,password)
-        )
+
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM users WHERE email=%s AND password=%s",
+        (email,password))
+        
 
         user = cursor.fetchone()
 
@@ -118,10 +121,12 @@ def post_job():
         description = request.form["description"]
 
         recruiter_id =session["user_id"]
-        cursor.execute(
-        "INSERT INTO jobs(title,description,recruiter_id) VALUES(%s,%s,%s)",
-        (title,description,recruiter_id)
-        )
+
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO jobs(title,description,recruiter_id) VALUES(%s,%s,%s)",
+        (title,description,recruiter_id))
+        
 
         db.commit()
 
@@ -136,10 +141,12 @@ def view_jobs():
         return "Access Denied", 403
 
     recruiter_id = session["user_id"]   
-    cursor.execute(
-        "SELECT * FROM jobs WHERE recruiter_id=%s",
-        (session["user_id"],)
-    )
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute( "SELECT * FROM jobs WHERE recruiter_id=%s",
+        (session["user_id"],))
+    
 
     jobs = cursor.fetchall()
 
@@ -280,13 +287,15 @@ def download_report():
 def candidate_dashboard():
 
     candidate_id = session["user_id"]
-
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         SELECT jobs.title, applications.status
         FROM applications
         JOIN jobs ON applications.job_id = jobs.id
         WHERE applications.candidate_id = %s
     """, (candidate_id,))
+    
 
     applications = cursor.fetchall()
 
@@ -306,10 +315,13 @@ def candidate_jobs():
     jobs = cursor.fetchall()
 
     # jobs already applied by this candidate
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         SELECT job_id FROM applications
         WHERE candidate_id=%s
     """, (candidate_id,))
+   
 
     applied_jobs = cursor.fetchall()
 
@@ -328,11 +340,13 @@ def apply(job_id):
 
     if request.method == "POST":
         candidate_id = session["user_id"]
-
+        db = get_db()
+        cursor = db.cursor()
         cursor.execute("""
             SELECT * FROM applications
             WHERE job_id=%s AND candidate_id=%s
         """, (job_id, candidate_id))
+        
 
         existing=cursor.fetchone()
         if existing:
@@ -372,6 +386,8 @@ def view_applicants(job_id):
     recruiter_id = session["user_id"]
 
     # 🔐 Ensure recruiter owns this job
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         SELECT id FROM jobs
         WHERE id=%s AND recruiter_id=%s
@@ -403,11 +419,11 @@ def screen_job(job_id):
     recruiter_id = session["user_id"]
 
     # check job ownership
-    cursor.execute(
-        "SELECT * FROM jobs WHERE id=%s AND recruiter_id=%s",
-        (job_id, recruiter_id)
-    )
-
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute( "SELECT * FROM jobs WHERE id=%s AND recruiter_id=%s",
+        (job_id, recruiter_id))
+   
     job = cursor.fetchone()
 
     if not job:
@@ -478,12 +494,18 @@ def shortlist(job_id, app_id):
         return "Access Denied", 403
 
     recruiter_id = session["user_id"]
+
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("SELECT name, email FROM users WHERE id=%s", (recruiter_id,))
+    
     recruiter = cursor.fetchone()
     recruiter_name = recruiter[0]
     recruiter_email = recruiter[1]
 
     # 🔐 Check if this job belongs to this recruiter
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         SELECT id FROM jobs 
         WHERE id=%s AND recruiter_id=%s
@@ -504,6 +526,8 @@ def shortlist(job_id, app_id):
     db.commit()
 
     # 📩 GET candidate email
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         SELECT users.email, jobs.title
         FROM applications
@@ -549,6 +573,8 @@ def reject(job_id, app_id):
         return "Access Denied", 403
 
     recruiter_id = session["user_id"]
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("SELECT name, email FROM users WHERE id=%s", (recruiter_id,))
     recruiter = cursor.fetchone()
     recruiter_name = recruiter[0]
@@ -566,6 +592,8 @@ def reject(job_id, app_id):
         return "Unauthorized Access", 403
 
     # ✅ Now safe to update
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         UPDATE applications 
         SET status='rejected' 
@@ -575,6 +603,8 @@ def reject(job_id, app_id):
     db.commit()
 
     # 📩 GET candidate email + job title
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         SELECT users.email, jobs.title
         FROM applications
