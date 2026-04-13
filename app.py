@@ -8,14 +8,23 @@ from flask_mail import Mail, Message
 from flask import session
 import time
 
+
+
+# def get_db():
+#     return mysql.connector.connect(
+#         host=os.environ.get("127.0.0.1"),
+#         user=os.environ.get("root"),
+#         password=os.environ.get("Sarang@123"),
+#         database=os.environ.get("ai_resume_screener")
+#     )
+
 def get_db():
     return mysql.connector.connect(
-        host=os.environ.get("DB_HOST"),
-        user=os.environ.get("DB_USER"),
-        password=os.environ.get("DB_PASSWORD"),
-        database=os.environ.get("DB_NAME")
+        host="127.0.0.1",
+        user="root",
+        password="Sarang@123",
+        database="ai_recruitment"
     )
-
 
 app = Flask(__name__)
 app.secret_key="mysecrete123"
@@ -28,7 +37,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'sarangbhokse29@gmail.com'
-app.config['MAIL_PASSWORD'] =os.environ.get("ygex ozdp hrxi byhe") 
+app.config['MAIL_PASSWORD'] ="ygex ozdp hrxi byhe"
 mail=Mail(app)
 
 app.config['MAIL_DEBUG'] = True
@@ -652,9 +661,10 @@ def logout():
 
 # ---------------- RUN APP ----------------
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    
+     app.run(debug=True)
+
+# if __name__ == "__main__":
+#     port = int(os.environ.get("PORT", 5000))
+#     app.run(host="0.0.0.0", port=port)
