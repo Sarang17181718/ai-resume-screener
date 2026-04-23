@@ -2,29 +2,56 @@ from flask import Flask,render_template, request, redirect, send_file, send_from
 import os
 import csv
 import zipfile
-import mysql.connector
+#import mysql.connector
 from resume_screener import run_resume_screening
 from flask_mail import Mail, Message
 from flask import session
 import time
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
 # def get_db():
+#      return mysql.connector.connect(
+#          host=os.environ.get("127.0.0.1"),
+#          user=os.environ.get("root"),
+#          password=os.environ.get("Sarang@123"),
+#          database=os.environ.get("ai_resume_screener")
+#      )
+
+
+# def get_db():
 #     return mysql.connector.connect(
-#         host=os.environ.get("127.0.0.1"),
-#         user=os.environ.get("root"),
-#         password=os.environ.get("Sarang@123"),
-#         database=os.environ.get("ai_resume_screener")
-#     )
+#         host=os.environ.get("DB_HOST"),
+#         user=os.environ.get("DB_USER"),
+#         password=os.environ.get("DB_PASSWORD"),
+#         database=os.environ.get("DB_NAME")
+        
+#         )
+
+import psycopg2
 
 def get_db():
-    return mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="Sarang@123",
-        database="ai_recruitment"
+    return psycopg2.connect(
+        host="db.smvntslbvuhyxbvpsynv.supabase.co",
+        database="postgres",
+        user="postgres",
+        password="D5nMPqxqgWlxKSbU",
+        port="5432",
+        sslmode="require"
     )
+
+db = get_db()
+print("Connected Successfully")
+#working normally
+# def get_db():
+#     return mysql.connector.connect(
+#         host="127.0.0.1",
+#         user="root",
+#         password="Sarang@123",
+#         database="ai_recruitment"
+#     )
 
 app = Flask(__name__)
 app.secret_key="mysecrete123"
@@ -37,12 +64,13 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'sarangbhokse29@gmail.com'
-app.config['MAIL_PASSWORD'] ="ygex ozdp hrxi byhe"
+#app.config['MAIL_PASSWORD'] ="ygex ozdp hrxi byhe"
+app.config['MAIL_PASSWORD'] = os.environ.get("MAIL_PASSWORD")
 mail=Mail(app)
 
 app.config['MAIL_DEBUG'] = True
 
-
+print("MAIL PASSWORD:", os.environ.get("MAIL_PASSWORD"))
 
 # ---------------- DATABASE CONNECTION ----------------
 
@@ -72,6 +100,8 @@ def signup():
         
 
         db.commit()
+        cursor.close()
+        db.close()
 
         return redirect("/login")
 
@@ -93,8 +123,11 @@ def login():
         cursor.execute("SELECT * FROM users WHERE email=%s AND password=%s",
         (email,password))
         
+        
 
         user = cursor.fetchone()
+        cursor.close()
+        db.close()
 
         if user:
             session["user_id"] = user[0]
@@ -138,6 +171,8 @@ def post_job():
         
 
         db.commit()
+        cursor.close()
+        db.close()
 
         return redirect("/view_jobs")
 
@@ -158,6 +193,8 @@ def view_jobs():
     
 
     jobs = cursor.fetchall()
+    cursor.close()
+    db.close()
 
     return render_template("view_jobs.html", jobs=jobs)
 
@@ -307,6 +344,8 @@ def candidate_dashboard():
     
 
     applications = cursor.fetchall()
+    cursor.close()
+    db.close()
 
     return render_template(
         "candidate_dashboard.html",
@@ -318,21 +357,25 @@ def candidate_dashboard():
 def candidate_jobs():
 
     candidate_id = session["user_id"]
+    db = get_db()
+    cursor = db.cursor()
 
     # all jobs
     cursor.execute("SELECT * FROM jobs")
     jobs = cursor.fetchall()
 
     # jobs already applied by this candidate
-    db = get_db()
-    cursor = db.cursor()
+    
     cursor.execute("""
         SELECT job_id FROM applications
         WHERE candidate_id=%s
     """, (candidate_id,))
+    
    
 
     applied_jobs = cursor.fetchall()
+    cursor.close()
+    db.close()
 
     # convert to list → [1,2,3]
     applied_job_ids = [j[0] for j in applied_jobs]
@@ -355,12 +398,14 @@ def apply(job_id):
             SELECT * FROM applications
             WHERE job_id=%s AND candidate_id=%s
         """, (job_id, candidate_id))
-        
 
         existing=cursor.fetchone()
+        
         if existing:
+            cursor.close()
+            db.close()
             return "You have already applied for this job"
-
+        
 
         file = request.files["resume"]
         unique_name=str(int(time.time())) + "_" + file.filename
@@ -369,7 +414,9 @@ def apply(job_id):
 
         file.save(filepath)
 
-        
+
+        db = get_db()
+        cursor = db.cursor()
 
         cursor.execute(
         "INSERT INTO applications(job_id,candidate_id,resume_filename) VALUES(%s,%s,%s)",
@@ -377,6 +424,9 @@ def apply(job_id):
         )
 
         db.commit()
+        cursor.close()
+        db.close()
+
 
         return "Application Submitted Successfully"
 
@@ -401,19 +451,27 @@ def view_applicants(job_id):
         SELECT id FROM jobs
         WHERE id=%s AND recruiter_id=%s
     """, (job_id, recruiter_id))
-
     job = cursor.fetchone()
+    cursor.close()
+    db.close()
+
+    
 
     if not job:
         return "Unauthorized Access", 403
 
     # ✅ Fetch applicants safely
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         SELECT * FROM applications
         WHERE job_id=%s
     """, (job_id,))
-
     applicants = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    
 
     return render_template(
         "view_applicants.html",
@@ -432,8 +490,12 @@ def screen_job(job_id):
     cursor = db.cursor()
     cursor.execute( "SELECT * FROM jobs WHERE id=%s AND recruiter_id=%s",
         (job_id, recruiter_id))
-   
+    
     job = cursor.fetchone()
+    cursor.close()
+    db.close()
+   
+   
 
     if not job:
         return "Unauthorized Access", 403
@@ -441,6 +503,8 @@ def screen_job(job_id):
     import shutil
 
     # get job description
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute(
         "SELECT description FROM jobs WHERE id=%s",
         (job_id,)
@@ -448,14 +512,21 @@ def screen_job(job_id):
 
     job = cursor.fetchone()
     job_text = job[0]
+    cursor.close()
+    db.close()
+    
 
     # get resumes for this job
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute(
         "SELECT resume_filename FROM applications WHERE job_id=%s",
         (job_id,)
     )
 
     resumes = cursor.fetchall()
+    cursor.close()
+    db.close()
 
     # create temporary folder
     temp_folder = "temp_resumes"
@@ -477,12 +548,18 @@ def screen_job(job_id):
             shutil.copy(source, destination)
 
     # run AI screening
+    db = get_db()
+    cursor = db.cursor()
+
     cursor.execute("""
                    SELECT id, resume_filename
                    FROM applications
                    WHERE job_id = %s
                    """, (job_id,))
     applications = cursor.fetchall()
+
+    cursor.close()
+    db.close()
     results=run_resume_screening(job_text,applications)
 
 
@@ -509,6 +586,9 @@ def shortlist(job_id, app_id):
     cursor.execute("SELECT name, email FROM users WHERE id=%s", (recruiter_id,))
     
     recruiter = cursor.fetchone()
+    cursor.close()
+    db.close()
+
     recruiter_name = recruiter[0]
     recruiter_email = recruiter[1]
 
@@ -521,18 +601,25 @@ def shortlist(job_id, app_id):
     """, (job_id, recruiter_id))
 
     job = cursor.fetchone()
+    cursor.close()
+    db.close()
 
     if not job:
         return "Unauthorized Access", 403
 
     # ✅ Now safe to update
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         UPDATE applications 
         SET status='shortlisted' 
         WHERE id=%s AND job_id=%s
     """, (app_id, job_id))
-
     db.commit()
+    cursor.close()
+    db.close()
+
+    
 
     # 📩 GET candidate email
     db = get_db()
@@ -546,6 +633,7 @@ def shortlist(job_id, app_id):
     """, (app_id,))
 
     data = cursor.fetchone()
+    
 
     if data:
         email = data[0]
@@ -569,6 +657,8 @@ def shortlist(job_id, app_id):
         """
 
         mail.send(msg)
+    cursor.close()
+    db.close()
 
     return redirect(request.referrer)
 
@@ -586,19 +676,26 @@ def reject(job_id, app_id):
     cursor = db.cursor()
     cursor.execute("SELECT name, email FROM users WHERE id=%s", (recruiter_id,))
     recruiter = cursor.fetchone()
+    cursor.close()
+    db.close()
     recruiter_name = recruiter[0]
     recruiter_email = recruiter[1]
 
     # 🔐 Check if this job belongs to this recruiter
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
         SELECT id FROM jobs 
         WHERE id=%s AND recruiter_id=%s
     """, (job_id, recruiter_id))
 
     job = cursor.fetchone()
+    cursor.close()
+    db.close()
 
     if not job:
         return "Unauthorized Access", 403
+    
 
     # ✅ Now safe to update
     db = get_db()
@@ -610,6 +707,8 @@ def reject(job_id, app_id):
     """, (app_id, job_id))
 
     db.commit()
+    cursor.close()
+    db.close()
 
     # 📩 GET candidate email + job title
     db = get_db()
@@ -623,7 +722,8 @@ def reject(job_id, app_id):
     """, (app_id, job_id))
 
     data = cursor.fetchone()
-
+    
+    
     if data:
         email = data[0]
         job_title = data[1]
@@ -651,6 +751,9 @@ def reject(job_id, app_id):
         """
 
         mail.send(msg)
+    cursor.close()
+    db.close()
+
 
     return redirect(request.referrer)
 
