@@ -2,7 +2,7 @@ from flask import Flask,render_template, request, redirect, send_file, send_from
 import os
 import csv
 import zipfile
-from resume_screener import run_resume_screening
+#from resume_screener import run_resume_screening
 from flask_mail import Mail, Message
 from flask import session
 import time
@@ -16,17 +16,29 @@ load_dotenv()
 
 import psycopg2
 
+# def get_db():
+#     return psycopg2.connect(
+#         host=os.environ.get("DB_HOST"),
+#         dbname=os.environ.get("DB_NAME"),
+#         user=os.environ.get("DB_USER"),
+#         password=os.environ.get("DB_PASSWORD"),
+#         port=os.environ.get("DB_PORT"),
+#         sslmode=os.environ.get("DB_SSLMODE")
+#     )
+
 def get_db():
-    return psycopg2.connect(
-        host=os.environ.get("DB_HOST"),
-        dbname=os.environ.get("DB_NAME"),
-        user=os.environ.get("DB_USER"),
-        password=os.environ.get("DB_PASSWORD"),
-        port=os.environ.get("DB_PORT"),
-        sslmode=os.environ.get("DB_SSLMODE")
-    )
-
-
+    try:
+        return psycopg2.connect(
+            host=os.environ.get("DB_HOST"),
+            dbname=os.environ.get("DB_NAME"),
+            user=os.environ.get("DB_USER"),
+            password=os.environ.get("DB_PASSWORD"),
+            port=os.environ.get("DB_PORT"),
+            sslmode=os.environ.get("DB_SSLMODE")
+        )
+    except Exception as e:
+        print("DB ERROR:", e)
+        return None
 
 app = Flask(__name__)
 app.secret_key="mysecrete123"
@@ -45,10 +57,9 @@ mail=Mail(app)
 
 app.config['MAIL_DEBUG'] = True
 
-@app.route("/")
-def home():
-    return "Server is running ✅"
-
+@app.route("/run_screening", methods=["POST"])
+def run_screening():
+    from resume_screener import run_resume_screening  # ✅ lazy load
 
 @app.route("/")
 def home():
