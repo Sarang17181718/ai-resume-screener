@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: python nltk_setup.py && gunicorn main:app --workers=1 --threads=2
