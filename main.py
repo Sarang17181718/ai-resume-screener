@@ -21,8 +21,13 @@ model_semantic = SentenceTransformer('all-MiniLM-L6-v2')
 
 training_data = []
 
-stop_words = set(stopwords.words('english'))
+from nltk.corpus import stopwords
 
+try:
+    stop_words = set(stopwords.words('english'))
+except:
+    nltk.download('stopwords')
+    stop_words = set(stopwords.words('english'))
 skills_list = [
 "python","java","c++","sql","machine learning","deep learning",
 "pandas","numpy","scikit learn","tensorflow","pytorch",

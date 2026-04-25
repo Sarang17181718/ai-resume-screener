@@ -191,7 +191,7 @@ def run_screening():
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(filepath)
     
-        applications.append((i, file.filename))  # fake app_id
+        applications.append((i, file.filename)) 
     results = run_resume_screening(job_text, applications)
 
     
