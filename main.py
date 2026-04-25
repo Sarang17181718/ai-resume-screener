@@ -38,6 +38,10 @@ def download_nltk_data():
 # call it once
 download_nltk_data()
 
+from nltk.corpus import stopwords
+
+stop_words = set(stopwords.words('english'))
+
 training_data = []
 
 # from nltk.corpus import stopwords
