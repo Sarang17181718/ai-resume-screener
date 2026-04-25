@@ -3,7 +3,6 @@ import fitz
 import re
 import os
 import pandas as pd
-import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
@@ -18,16 +17,36 @@ from sentence_transformers import SentenceTransformer
 model_semantic = SentenceTransformer('all-MiniLM-L6-v2')
 # nltk.download('punkt')
 # nltk.download('stopwords')
+import nltk
+
+def download_nltk_data():
+    try:
+        nltk.data.find('corpora/stopwords')
+    except:
+        nltk.download('stopwords')
+
+    try:
+        nltk.data.find('tokenizers/punkt')
+    except:
+        nltk.download('punkt')
+
+    try:
+        nltk.data.find('tokenizers/punkt_tab')
+    except:
+        nltk.download('punkt_tab')
+
+# call it once
+download_nltk_data()
 
 training_data = []
 
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 
-try:
-    stop_words = set(stopwords.words('english'))
-except:
-    nltk.download('stopwords')
-    stop_words = set(stopwords.words('english'))
+# try:
+#     stop_words = set(stopwords.words('english'))
+# except:
+#     nltk.download('stopwords')
+#     stop_words = set(stopwords.words('english'))
 skills_list = [
 "python","java","c++","sql","machine learning","deep learning",
 "pandas","numpy","scikit learn","tensorflow","pytorch",
