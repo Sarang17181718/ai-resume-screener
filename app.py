@@ -45,7 +45,9 @@ mail=Mail(app)
 
 app.config['MAIL_DEBUG'] = True
 
-
+@app.route("/")
+def home():
+    return "Server is running ✅"
 
 
 @app.route("/")
