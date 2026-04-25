@@ -2,7 +2,6 @@ from flask import Flask,render_template, request, redirect, send_file, send_from
 import os
 import csv
 import zipfile
-#import mysql.connector
 from resume_screener import run_resume_screening
 from flask_mail import Mail, Message
 from flask import session
@@ -12,46 +11,22 @@ load_dotenv()
 
 
 
-# def get_db():
-#      return mysql.connector.connect(
-#          host=os.environ.get("127.0.0.1"),
-#          user=os.environ.get("root"),
-#          password=os.environ.get("Sarang@123"),
-#          database=os.environ.get("ai_resume_screener")
-#      )
 
 
-# def get_db():
-#     return mysql.connector.connect(
-#         host=os.environ.get("DB_HOST"),
-#         user=os.environ.get("DB_USER"),
-#         password=os.environ.get("DB_PASSWORD"),
-#         database=os.environ.get("DB_NAME")
-        
-#         )
 
 import psycopg2
 
 def get_db():
     return psycopg2.connect(
-        host="db.smvntslbvuhyxbvpsynv.supabase.co",
-        database="postgres",
-        user="postgres",
-        password="D5nMPqxqgWlxKSbU",
-        port="5432",
-        sslmode="require"
+        host=os.environ.get("DB_HOST"),
+        dbname=os.environ.get("DB_NAME"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASSWORD"),
+        port=os.environ.get("DB_PORT"),
+        sslmode=os.environ.get("DB_SSLMODE")
     )
 
-db = get_db()
-print("Connected Successfully")
-#working normally
-# def get_db():
-#     return mysql.connector.connect(
-#         host="127.0.0.1",
-#         user="root",
-#         password="Sarang@123",
-#         database="ai_recruitment"
-#     )
+
 
 app = Flask(__name__)
 app.secret_key="mysecrete123"
@@ -64,24 +39,20 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'sarangbhokse29@gmail.com'
-#app.config['MAIL_PASSWORD'] ="ygex ozdp hrxi byhe"
+
 app.config['MAIL_PASSWORD'] = os.environ.get("MAIL_PASSWORD")
 mail=Mail(app)
 
 app.config['MAIL_DEBUG'] = True
 
-print("MAIL PASSWORD:", os.environ.get("MAIL_PASSWORD"))
-
-# ---------------- DATABASE CONNECTION ----------------
 
 
-# ---------------- HOME ----------------
+
 @app.route("/")
 def home():
     return redirect("/login")
 
 
-# ---------------- SIGNUP ----------------
 
 @app.route("/signup", methods=["GET","POST"])
 def signup():
@@ -107,7 +78,6 @@ def signup():
 
     return render_template("signup.html")
 
-# ---------------- LOGIN ----------------
 
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -147,7 +117,6 @@ def login():
 
     return render_template("login.html")
 
-# ---------------- RECRUITER DASHBOARD ----------------
 
 @app.route("/recruiter")
 def recruiter_dashboard():
@@ -199,14 +168,12 @@ def view_jobs():
     return render_template("view_jobs.html", jobs=jobs)
 
 
-# ---------------- AI SCREENING PAGE ----------------
 
 @app.route("/ai_screening")
 def ai_screening():
     return render_template("ai_screening.html")
 
 
-# ---------------- RUN AI SCREENING ----------------
 
 @app.route("/run_screening", methods=["POST"])
 def run_screening():
@@ -233,13 +200,11 @@ def run_screening():
     return render_template("results.html", results=results)
 
 
-# ---------------- DOWNLOAD SINGLE RESUME ----------------
 
 @app.route("/download/<filename>")
 def download_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename, as_attachment=True)
 
-# ---------------- DOWNLOAD TOP CANDIDATES ZIP ----------------
 
 @app.route("/download_top_zip")
 def download_top_zip():
@@ -261,7 +226,6 @@ def download_top_zip():
     return send_file(zip_filename, as_attachment=True)
 
 
-# ---------------- CSV REPORT ----------------
 from openpyxl import Workbook
 from openpyxl.styles import Font
 
@@ -360,11 +324,9 @@ def candidate_jobs():
     db = get_db()
     cursor = db.cursor()
 
-    # all jobs
     cursor.execute("SELECT * FROM jobs")
     jobs = cursor.fetchall()
 
-    # jobs already applied by this candidate
     
     cursor.execute("""
         SELECT job_id FROM applications
@@ -377,7 +339,6 @@ def candidate_jobs():
     cursor.close()
     db.close()
 
-    # convert to list → [1,2,3]
     applied_job_ids = [j[0] for j in applied_jobs]
 
     return render_template(
@@ -438,7 +399,6 @@ def apply(job_id):
 @app.route("/view_applicants/<int:job_id>")
 def view_applicants(job_id):
 
-    # 🔐 Check login
     if "user_id" not in session or session["role"] != "recruiter":
         return "Access Denied", 403
 
@@ -460,7 +420,6 @@ def view_applicants(job_id):
     if not job:
         return "Unauthorized Access", 403
 
-    # ✅ Fetch applicants safely
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -485,7 +444,6 @@ def view_applicants(job_id):
 def screen_job(job_id):
     recruiter_id = session["user_id"]
 
-    # check job ownership
     db = get_db()
     cursor = db.cursor()
     cursor.execute( "SELECT * FROM jobs WHERE id=%s AND recruiter_id=%s",
@@ -502,7 +460,7 @@ def screen_job(job_id):
 
     import shutil
 
-    # get job description
+    
     db = get_db()
     cursor = db.cursor()
     cursor.execute(
@@ -516,7 +474,6 @@ def screen_job(job_id):
     db.close()
     
 
-    # get resumes for this job
     db = get_db()
     cursor = db.cursor()
     cursor.execute(
@@ -528,7 +485,6 @@ def screen_job(job_id):
     cursor.close()
     db.close()
 
-    # create temporary folder
     temp_folder = "temp_resumes"
 
     if os.path.exists(temp_folder):
@@ -536,7 +492,6 @@ def screen_job(job_id):
 
     os.makedirs(temp_folder)
 
-    # copy applicant resumes into temp folder
     for r in resumes:
 
         filename = r[0]
@@ -547,7 +502,6 @@ def screen_job(job_id):
         if os.path.exists(source):
             shutil.copy(source, destination)
 
-    # run AI screening
     db = get_db()
     cursor = db.cursor()
 
@@ -575,7 +529,6 @@ def screen_job(job_id):
 @app.route("/shortlist/<int:job_id>/<int:app_id>")
 def shortlist(job_id, app_id):
 
-    # 🔐 Check login + role
     if "user_id" not in session or session["role"] != "recruiter":
         return "Access Denied", 403
 
@@ -592,7 +545,6 @@ def shortlist(job_id, app_id):
     recruiter_name = recruiter[0]
     recruiter_email = recruiter[1]
 
-    # 🔐 Check if this job belongs to this recruiter
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -607,7 +559,6 @@ def shortlist(job_id, app_id):
     if not job:
         return "Unauthorized Access", 403
 
-    # ✅ Now safe to update
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -621,7 +572,6 @@ def shortlist(job_id, app_id):
 
     
 
-    # 📩 GET candidate email
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -667,7 +617,6 @@ def shortlist(job_id, app_id):
 @app.route("/reject/<int:job_id>/<int:app_id>")
 def reject(job_id, app_id):
 
-    # 🔐 Check login + role
     if "user_id" not in session or session["role"] != "recruiter":
         return "Access Denied", 403
 
@@ -681,7 +630,6 @@ def reject(job_id, app_id):
     recruiter_name = recruiter[0]
     recruiter_email = recruiter[1]
 
-    # 🔐 Check if this job belongs to this recruiter
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -697,7 +645,6 @@ def reject(job_id, app_id):
         return "Unauthorized Access", 403
     
 
-    # ✅ Now safe to update
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -710,7 +657,6 @@ def reject(job_id, app_id):
     cursor.close()
     db.close()
 
-    # 📩 GET candidate email + job title
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -728,7 +674,6 @@ def reject(job_id, app_id):
         email = data[0]
         job_title = data[1]
 
-        # 📧 SEND EMAIL
         msg = Message(
             subject="Application Update",
             sender=("AI Recruitment System",app.config['MAIL_USERNAME']),
@@ -762,12 +707,13 @@ def logout():
     session.clear()
     return redirect("/login")
 
-# ---------------- RUN APP ----------------
+
 
 if __name__ == "__main__":
-    
-     app.run(debug=True)
+      
+     
+      port = int(os.environ.get("PORT", 5000))
+      app.run(host="0.0.0.0", port=port)
 
-# if __name__ == "__main__":
-#     port = int(os.environ.get("PORT", 5000))
-#     app.run(host="0.0.0.0", port=port)
+#if __name__ == "__main__":
+ #   app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
