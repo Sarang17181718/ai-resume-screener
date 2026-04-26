@@ -8,22 +8,22 @@ from sklearn.metrics.pairwise import cosine_similarity
 from resume_parser import parse_resume
 
 # ------------------ NLTK SETUP (SAFE FOR RAILWAY) ------------------
-nltk_path = "/tmp/nltk_data"
-os.makedirs(nltk_path, exist_ok=True)
-nltk.data.path.append(nltk_path)
+# nltk_path = "/tmp/nltk_data"
+# os.makedirs(nltk_path, exist_ok=True)
+# nltk.data.path.append(nltk_path)
 
-def download_nltk():
-    try:
-        nltk.data.find("tokenizers/punkt")
-    except:
-        nltk.download("punkt", download_dir=nltk_path)
+# def download_nltk():
+#     try:
+#         nltk.data.find("tokenizers/punkt")
+#     except:
+#         nltk.download("punkt", download_dir=nltk_path)
 
-    try:
-        nltk.data.find("corpora/stopwords")
-    except:
-        nltk.download("stopwords", download_dir=nltk_path)
+#     try:
+#         nltk.data.find("corpora/stopwords")
+#     except:
+#         nltk.download("stopwords", download_dir=nltk_path)
 
-download_nltk()
+# download_nltk()
 
 # ------------------ GLOBALS ------------------
 skills_list = [
