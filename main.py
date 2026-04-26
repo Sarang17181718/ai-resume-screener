@@ -7,19 +7,15 @@ import nltk
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-
 from sentence_transformers import SentenceTransformer
 
-
 # ------------------ FUNCTIONS ------------------
-
 def download_nltk_data():
     try:
         nltk.data.find('corpora/stopwords')
@@ -31,7 +27,6 @@ def download_nltk_data():
     except:
         nltk.download('punkt')
 
-
 def clean_text(text, stop_words):
     text = text.lower()
     text = re.sub(r'[^\w\s]', ' ', text)
@@ -39,10 +34,8 @@ def clean_text(text, stop_words):
     tokens = [w for w in tokens if w not in stop_words]
     return " ".join(tokens)
 
-
 def extract_skills(text, skills_list):
     return [skill for skill in skills_list if skill in text]
-
 
 def extract_pdf_text(pdf_path):
     text = ""
@@ -61,7 +54,6 @@ def extract_text_from_pdf(pdf_path):
                 text += page_text
     return text
 
-
 def extract_experience(text):
     matches = re.findall(r'(\d+)\s+years', text)
     return max([int(x) for x in matches]) if matches else 0
@@ -70,12 +62,9 @@ def extract_experience(text):
 def extract_education(text, education_keywords):
     return [edu for edu in education_keywords if edu in text]
 
-
 # ------------------ MAIN ------------------
-
 def main():
 
-    # Setup
     download_nltk_data()
     stop_words = set(stopwords.words('english'))
 
@@ -109,7 +98,6 @@ def main():
     training_data = []
 
     # ------------------ LOOP ------------------
-
     for job_filename in os.listdir(job_folder):
 
         if job_filename.endswith(".txt"):
@@ -180,7 +168,6 @@ def main():
                 print(f"Education Score: {edu_s:.2f}")
 
     # ------------------ ML ------------------
-
     df = pd.DataFrame(training_data, columns=[
         "resume","job","similarity","skill_score",
         "exp_score","edu_score","overall_score","label"
