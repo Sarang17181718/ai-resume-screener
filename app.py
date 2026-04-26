@@ -1,5 +1,4 @@
 from flask import Flask,render_template, request, redirect, send_file, send_from_directory
-import os
 import csv
 import zipfile
 from resume_screener import run_resume_screening
@@ -11,7 +10,22 @@ load_dotenv()
 
 import psycopg2
 
+import nltk
+import os
+os.environ["NLTK_DATA"] = "/app/nltk_data"
+nltk_data_path = "/app/nltk_data"
+os.makedirs(nltk_data_path, exist_ok=True)
+nltk.data.path.append(nltk_data_path)
 
+def download_nltk():
+    packages = ["punkt", "stopwords", "punkt_tab"]
+    for pkg in packages:
+        try:
+            nltk.data.find(pkg)
+        except:
+            nltk.download(pkg, download_dir=nltk_data_path)
+
+download_nltk()
 # def get_db():
 #     try:
 #         return psycopg2.connect(
