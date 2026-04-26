@@ -2,42 +2,48 @@ from flask import Flask,render_template, request, redirect, send_file, send_from
 import os
 import csv
 import zipfile
-#from resume_screener import run_resume_screening
+from resume_screener import run_resume_screening
 from flask_mail import Mail, Message
 from flask import session
 import time
 from dotenv import load_dotenv
 load_dotenv()
 
-
-
-
-
-
 import psycopg2
 
+
 # def get_db():
-#     return psycopg2.connect(
-#         host=os.environ.get("DB_HOST"),
-#         dbname=os.environ.get("DB_NAME"),
-#         user=os.environ.get("DB_USER"),
-#         password=os.environ.get("DB_PASSWORD"),
-#         port=os.environ.get("DB_PORT"),
-#         sslmode=os.environ.get("DB_SSLMODE")
-#     )
+#     try:
+#         return psycopg2.connect(
+#             host=os.environ.get("DB_HOST"),
+#             dbname=os.environ.get("DB_NAME"),
+#             user=os.environ.get("DB_USER"),
+#             password=os.environ.get("DB_PASSWORD"),
+#             port=os.environ.get("DB_PORT"),
+#             sslmode=os.environ.get("DB_SSLMODE")
+#         )
+#     except Exception as e:
+#         print("❌ DB ERROR:", e)
+#         return None
+
 
 def get_db():
+    
+
     try:
-        return psycopg2.connect(
+        conn = psycopg2.connect(
             host=os.environ.get("DB_HOST"),
             dbname=os.environ.get("DB_NAME"),
             user=os.environ.get("DB_USER"),
             password=os.environ.get("DB_PASSWORD"),
-            port=os.environ.get("DB_PORT"),
+            port=int(os.environ.get("DB_PORT")),
             sslmode=os.environ.get("DB_SSLMODE")
         )
+        
+        return conn
+
     except Exception as e:
-        print("DB ERROR:", e)
+        print("❌ DB ERROR:", str(e))
         return None
 
 app = Flask(__name__)
@@ -57,15 +63,11 @@ mail=Mail(app)
 
 app.config['MAIL_DEBUG'] = True
 
-@app.route("/run_screening", methods=["POST"])
-def run_screening():
-    from resume_screener import run_resume_screening  # ✅ lazy load
+
 
 @app.route("/")
 def home():
     return redirect("/login")
-
-
 
 @app.route("/signup", methods=["GET","POST"])
 def signup():
@@ -78,7 +80,11 @@ def signup():
         role = request.form["role"]
 
         db = get_db()
+        if db is None:
+            return "Database connection failed"
+
         cursor = db.cursor()
+        
         cursor.execute("INSERT INTO users(name,email,password,role) VALUES(%s,%s,%s,%s)",
         (name,email,password,role))
         
@@ -94,6 +100,7 @@ def signup():
 
 @app.route("/login", methods=["GET","POST"])
 def login():
+    print("➡️ Login route hit..")
 
     if request.method == "POST":
 
@@ -102,6 +109,10 @@ def login():
 
 
         db = get_db()
+        if db is None:
+            return "Database connection failed"
+        print("➡️ DB Connection successful")
+
         cursor = db.cursor()
         cursor.execute("SELECT * FROM users WHERE email=%s AND password=%s",
         (email,password))
@@ -725,6 +736,7 @@ import os
 if __name__ == "__main__": 
       port = int(os.environ.get("PORT", 5000))
       app.run(host="0.0.0.0", port=port)
+      app.run(debug=True)
 
 #if __name__ == "__main__":
  #   app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
