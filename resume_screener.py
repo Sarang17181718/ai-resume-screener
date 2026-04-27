@@ -1,29 +1,9 @@
 import os
 import re
 import pdfplumber
-import nltk
-
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from resume_parser import parse_resume
-
-# ------------------ NLTK SETUP (SAFE FOR RAILWAY) ------------------
-# nltk_path = "/tmp/nltk_data"
-# os.makedirs(nltk_path, exist_ok=True)
-# nltk.data.path.append(nltk_path)
-
-# def download_nltk():
-#     try:
-#         nltk.data.find("tokenizers/punkt")
-#     except:
-#         nltk.download("punkt", download_dir=nltk_path)
-
-#     try:
-#         nltk.data.find("corpora/stopwords")
-#     except:
-#         nltk.download("stopwords", download_dir=nltk_path)
-
-# download_nltk()
 
 # ------------------ GLOBALS ------------------
 skills_list = [
@@ -32,8 +12,7 @@ skills_list = [
     "pandas", "numpy", "tensorflow", "pytorch"
 ]
 
-model = None  # lazy load
-
+model = None
 
 # ------------------ MODEL LOADER ------------------
 def get_model():
@@ -45,7 +24,7 @@ def get_model():
     return model
 
 
-# ------------------ HELPERS ------------------
+# ------------------ TEXT EXTRACTION ------------------
 def extract_text(filepath):
     if filepath.endswith(".pdf"):
         text = ""
@@ -63,11 +42,20 @@ def extract_text(filepath):
     return ""
 
 
+# ------------------ SIMPLE CLEANING (NO NLTK) ------------------
+def clean_text(text):
+    text = text.lower()
+    text = re.sub(r"[^\w\s]", " ", text)
+    return text
+
+
+# ------------------ SKILL EXTRACTION ------------------
 def extract_skills(text):
     text = text.lower()
     return [skill for skill in skills_list if skill in text]
 
 
+# ------------------ SCORES ------------------
 def compute_skill_score(resume_text):
     score = 0
     for skill in ["python", "sql", "machine learning", "aws", "docker"]:
@@ -77,7 +65,7 @@ def compute_skill_score(resume_text):
 
 
 def compute_experience_score(resume_text):
-    match = re.search(r'(\d+)\s+years', resume_text.lower())
+    match = re.search(r"(\d+)\s+years", resume_text.lower())
     if match:
         years = int(match.group(1))
         if years >= 5:
@@ -103,8 +91,9 @@ def compute_education_score(resume_text):
 # ------------------ MAIN FUNCTION ------------------
 def run_resume_screening(job_text, applications):
 
-    model = get_model()  # lazy load here
+    model = get_model()
 
+    job_text = clean_text(job_text)
     job_skills = extract_skills(job_text)
     job_embedding = model.encode(job_text)
 
@@ -117,33 +106,33 @@ def run_resume_screening(job_text, applications):
         file_path = os.path.join(os.getcwd(), "uploads", resume_filename)
 
         if not os.path.exists(file_path):
-            print("❌ Missing file:", file_path)
             continue
 
         resume_text = extract_text(file_path)
-
         if not resume_text:
             continue
 
-        # -------- Candidate Info --------
+        resume_text = clean_text(resume_text)
+
         candidate_info = parse_resume(resume_text)
         name = candidate_info.get("name", "N/A")
         email = candidate_info.get("email", "N/A")
         phone = candidate_info.get("phone", "N/A")
 
-        # -------- Skills --------
         resume_skills = extract_skills(resume_text)
+
         matched_skills = list(set(resume_skills) & set(job_skills))
         missing_skills = list(set(job_skills) - set(resume_skills))
 
-        # -------- Semantic --------
         resume_embedding = model.encode(resume_text)
-        similarity = cosine_similarity(
-            [resume_embedding], [job_embedding]
-        )[0][0]
-        semantic_score = similarity * 100
 
-        # -------- Scores --------
+        similarity = cosine_similarity(
+            [resume_embedding],
+            [job_embedding]
+        )[0][0]
+
+        semantic_score = float(similarity * 100)
+
         skill_score = compute_skill_score(resume_text)
         exp_score = compute_experience_score(resume_text)
         edu_score = compute_education_score(resume_text)
@@ -171,5 +160,4 @@ def run_resume_screening(job_text, applications):
         ))
 
     results.sort(key=lambda x: x[6], reverse=True)
-
     return results[:10]

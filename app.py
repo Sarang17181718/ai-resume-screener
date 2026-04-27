@@ -12,19 +12,7 @@ import psycopg2
 
 import os
 
-# def get_db():
-#     try:
-#         return psycopg2.connect(
-#             host=os.environ.get("DB_HOST"),
-#             dbname=os.environ.get("DB_NAME"),
-#             user=os.environ.get("DB_USER"),
-#             password=os.environ.get("DB_PASSWORD"),
-#             port=os.environ.get("DB_PORT"),
-#             sslmode=os.environ.get("DB_SSLMODE")
-#         )
-#     except Exception as e:
-#         print("❌ DB ERROR:", e)
-#         return None
+
 
 
 def get_db():
@@ -732,11 +720,10 @@ def logout():
     return redirect("/login")
 
 
-import os
-if __name__ == "__main__": 
-      port = int(os.environ.get("PORT", 5000))
-      app.run(host="0.0.0.0", port=port)
-      app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
+
 
 #if __name__ == "__main__":
  #   app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
