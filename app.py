@@ -57,6 +57,10 @@ app.config['MAIL_DEBUG'] = True
 def home():
     return redirect("/login")
 
+@app.route("/test")
+def test():
+    return "App is running"
+
 @app.route("/signup", methods=["GET","POST"])
 def signup():
 
