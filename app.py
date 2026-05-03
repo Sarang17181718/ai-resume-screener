@@ -9,15 +9,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import psycopg2
-
 import os
-
-
-
 
 def get_db():
     
-
     try:
         conn = psycopg2.connect(
             host=os.environ.get("DB_HOST"),
@@ -725,6 +720,6 @@ def logout():
 
 
 if __name__ == "__main__":
-     port = int(os.environ.get("PORT", 5000))
-     app.run(host="0.0.0.0", port=port, debug=True )
+      port = int(os.environ.get("PORT", 5000))
+      app.run(host="0.0.0.0", port=port, debug=True )
 

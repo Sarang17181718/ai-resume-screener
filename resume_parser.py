@@ -4,6 +4,7 @@ import re
 nlp = spacy.load("en_core_web_sm")
 
 
+
 def extract_email(text):
 
     email_pattern = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
