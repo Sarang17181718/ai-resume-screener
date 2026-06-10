@@ -24,12 +24,18 @@ def extract_phone(text):
 
 
 def extract_name(text):
+    lines = text.split("\n")
 
-    doc = nlp(text)
+    for line in lines[:5]:  # check first few lines only
+        line = line.strip()
 
-    for ent in doc.ents:
-        if ent.label_ == "PERSON":
-            return ent.text
+        if (
+            len(line) > 3
+            and "@" not in line
+            and "|" not in line
+            and not any(char.isdigit() for char in line)
+        ):
+            return line.title()
 
     return "Not Found"
 
