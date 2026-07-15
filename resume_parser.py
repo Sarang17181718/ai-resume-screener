@@ -26,7 +26,7 @@ def extract_phone(text):
 def extract_name(text):
     lines = text.split("\n")
 
-    for line in lines[:5]:  # check first few lines only
+    for line in lines[:5]:  
         line = line.strip()
 
         if (

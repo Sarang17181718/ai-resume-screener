@@ -26,7 +26,7 @@ def get_db():
         return conn
 
     except Exception as e:
-        print("❌ DB ERROR:", str(e))
+        print(" DB ERROR:", str(e))
         return None
 
 app = Flask(__name__)
@@ -194,8 +194,8 @@ def run_screening():
     files = request.files.getlist("resumes")
 
     # clear old uploads
-    for file in os.listdir(UPLOAD_FOLDER):
-        os.remove(os.path.join(UPLOAD_FOLDER, file))
+    # for file in os.listdir(UPLOAD_FOLDER):
+    #     os.remove(os.path.join(UPLOAD_FOLDER, file))
 
     applications = []
     for i, file in enumerate(files):
@@ -250,6 +250,7 @@ def create_excel_report(results):
         "Rank",
         "Resume Name",
         "Semantic Score",
+        "TF-IDF Score",
         "Skill Score",
         "Experience Score",
         "Education Score",
@@ -273,8 +274,9 @@ def create_excel_report(results):
             round(r[4],2),
             round(r[5],2),
             round(r[6],2),
-            ", ".join(r[7]),
-            ", ".join(r[8])
+            round(r[7],2),
+            ", ".join(r[8]),
+            ", ".join(r[9])
         ])
 
     

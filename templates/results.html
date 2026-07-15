@@ -99,6 +99,8 @@ Download Full Report (CSV)
 <tr>
 <th>Rank</th>
 <th>Resume</th>
+<th>TF-IDF</th>
+<th>Semantic</th>
 <th>Final Score</th>
 <th>Download</th>
 <th>Name</th>
@@ -114,8 +116,9 @@ Download Full Report (CSV)
 <td>{{ loop.index }}</td>
 
 <td>{{ r[1] }}</td> <!-- Resume filename -->
-
-<td>{{ r[6] | round(2) }}</td> <!-- Final Score -->
+<td>{{ r[3] | round(2) }}</td>   <!-- TF-IDF -->
+<td>{{ r[2] | round(2) }}</td>   <!-- Semantic -->
+<td>{{ r[7] | round(2) }}</td> <!-- Final Score -->
 
 <td>
 <a href="/download/{{ r[1] }}" class="download-btn">
@@ -123,11 +126,13 @@ Download
 </a>
 </td>
 
-<td>{{ r[9] }}</td> <!-- Name -->
+<td>{{ r[10] }}</td> <!-- Name -->
 
-<td>{{ r[10] }}</td> <!-- Email -->
+<td>{{ r[11] }}</td> <!-- Email -->
 
-<td>{{ r[11] }}</td> <!-- Phone -->
+<td>{{ r[12] }}</td> <!-- Phone -->
+
+
 
 <td>
     <a href="/shortlist/{{job_id}}/{{ r[0] }}">
@@ -157,7 +162,7 @@ const resumes = data.map(function(r){
 });
 
 const scores = data.map(function(r){
-    return r[6];
+    return r[7];
 });
 
 const ctx = document.getElementById('scoreChart').getContext('2d');
