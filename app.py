@@ -52,9 +52,6 @@ app.config['MAIL_DEBUG'] = True
 def home():
     return redirect("/login")
 
-@app.route("/test")
-def test():
-    return "App is running"
 
 @app.route("/signup", methods=["GET","POST"])
 def signup():
@@ -87,7 +84,7 @@ def signup():
 
 @app.route("/login", methods=["GET","POST"])
 def login():
-    print("➡️ Login route hit..")
+    
 
     if request.method == "POST":
 
@@ -98,7 +95,6 @@ def login():
         db = get_db()
         if db is None:
             return "Database connection failed"
-        print("➡️ DB Connection successful")
 
         cursor = db.cursor()
         cursor.execute("SELECT * FROM users WHERE email=%s AND password=%s",
@@ -193,7 +189,6 @@ def run_screening():
 
     files = request.files.getlist("resumes")
 
-    # clear old uploads
     # for file in os.listdir(UPLOAD_FOLDER):
     #     os.remove(os.path.join(UPLOAD_FOLDER, file))
 
@@ -417,7 +412,6 @@ def view_applicants(job_id):
 
     recruiter_id = session["user_id"]
 
-    # 🔐 Ensure recruiter owns this job
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -602,7 +596,6 @@ def shortlist(job_id, app_id):
         email = data[0]
         job_title = data[1]
 
-        # 📧 SEND EMAIL
         msg = Message(
             subject="Congratulations! You are Shortlisted 🎉",
             sender=("AI Recruitment System",app.config['MAIL_USERNAME']),

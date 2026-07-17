@@ -1,6 +1,5 @@
 # AI Resume Screener
 
-Final Year Project
 
 ## Features
 - Resume preprocessing
